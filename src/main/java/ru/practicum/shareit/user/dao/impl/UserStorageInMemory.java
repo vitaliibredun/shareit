@@ -10,6 +10,7 @@ import java.util.*;
 public class UserStorageInMemory implements UserStorage {
     private final Map<Integer, User> users = new HashMap<>();
     private Integer counter = 0;
+
     @Override
     public User createUser(User user) {
         user.setId(addId());
@@ -51,7 +52,7 @@ public class UserStorageInMemory implements UserStorage {
         return users.remove(userId) != null;
     }
 
-    private Integer addId(){
+    private Integer addId() {
         return ++counter;
     }
 }
