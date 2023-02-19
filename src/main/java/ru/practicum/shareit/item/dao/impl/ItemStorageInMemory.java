@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 public class ItemStorageInMemory implements ItemStorage {
     private final Map<Integer, List<Item>> itemsByUsers = new HashMap<>();
     private Integer itemId = 0;
+    
     @Override
     public Item createItem(Integer userId, Item item) {
         boolean userExist = itemsByUsers.containsKey(userId);
