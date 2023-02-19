@@ -52,7 +52,7 @@ public class UserStorageInMemory implements UserStorage {
         return users.remove(userId) != null;
     }
 
-    private Integer addId() {
+    private Integer addId(){
         return ++counter;
     }
 }
