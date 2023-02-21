@@ -2,7 +2,6 @@ package ru.practicum.shareit.user.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.service.UserService;
@@ -16,7 +15,7 @@ public class UserController {
     private final UserService userService;
 
     @Autowired
-    public UserController(@Qualifier("userServiceImpl") UserService userService) {
+    public UserController(UserService userService) {
         this.userService = userService;
     }
 

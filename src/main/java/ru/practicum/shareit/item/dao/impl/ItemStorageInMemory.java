@@ -5,33 +5,18 @@ import ru.practicum.shareit.item.dao.ItemStorage;
 import ru.practicum.shareit.item.model.Item;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Component("itemStorageInMemory")
 public class ItemStorageInMemory implements ItemStorage {
-    private final Map<Integer, List<Item>> itemsByUsers = new HashMap<>();
+    private final Map<Integer, Item> allItems = new HashMap<>();
     private Integer itemId = 0;
 
     @Override
     public Item createItem(Integer userId, Item item) {
-        boolean userExist = itemsByUsers.containsKey(userId);
-        if (!userExist) {
-            List<Item> items = new ArrayList<>();
-            item.setId(addId());
-            item.setOwner(userId);
-            items.add(item);
-            itemsByUsers.put(userId, items);
-        }
-        if (userExist) {
-            List<Item> items = itemsByUsers.get(userId);
-            item.setId(addId());
-            item.setOwner(userId);
-            items.add(item);
-        }
-        return itemsByUsers.get(userId)
-                .stream()
-                .reduce((firstItem, ItemFromStorage) -> ItemFromStorage)
-                .orElse(null);
+        item.setId(addId());
+        item.setOwner(userId);
+        allItems.put(itemId, item);
+        return allItems.get(item.getId());
     }
 
     @Override
@@ -52,62 +37,58 @@ public class ItemStorageInMemory implements ItemStorage {
             String newName = item.getName();
             String newDescription = item.getDescription();
             Boolean newAvailability = item.getAvailable();
-            List<Item> items = itemsByUsers.get(userId);
-            Item itemFromStorage = items.stream().filter(i -> i.getId().equals(itemId)).findFirst().orElseThrow();
+            Item itemFromStorage = allItems.get(itemId);
             itemFromStorage.setName(newName);
             itemFromStorage.setDescription(newDescription);
             itemFromStorage.setAvailable(newAvailability);
         }
         if (updateItemName) {
             String newName = item.getName();
-            List<Item> items = itemsByUsers.get(userId);
-            Item itemFromStorage = items.stream().filter(i -> i.getId().equals(itemId)).findFirst().orElseThrow();
+            Item itemFromStorage = allItems.get(itemId);
             itemFromStorage.setName(newName);
         }
         if (updateItemDescription) {
             String newDescription = item.getDescription();
-            List<Item> items = itemsByUsers.get(userId);
-            Item itemFromStorage = items.stream().filter(i -> i.getId().equals(itemId)).findFirst().orElseThrow();
+            Item itemFromStorage = allItems.get(itemId);
             itemFromStorage.setDescription(newDescription);
         }
         if (updateItemAvailable) {
             Boolean newAvailable = item.getAvailable();
-            List<Item> items = itemsByUsers.get(userId);
-            Item itemFromStorage = items.stream().filter(i -> i.getId().equals(itemId)).findFirst().orElseThrow();
+            Item itemFromStorage = allItems.get(itemId);
             itemFromStorage.setAvailable(newAvailable);
         }
-
-
-        return itemsByUsers.get(userId)
-                .stream()
-                .filter(i -> i.getId().equals(itemId))
-                .findFirst()
-                .orElse(null);
+        return allItems.get(itemId);
     }
 
     @Override
     public Item findItem(Integer itemId) {
-        return itemsByUsers.values()
-                .stream()
-                .flatMap(List::stream)
-                .filter(i -> i.getId().equals(itemId))
-                .findFirst()
-                .orElse(null);
+        return allItems.get(itemId);
     }
 
     @Override
     public List<Item> findAllItemsByUser(Integer userId) {
-        return itemsByUsers.get(userId);
+        List<Item> items = new ArrayList<>();
+        for (Item item : allItems.values()) {
+            boolean itemFromUser = item.getOwner().equals(userId);
+            if (itemFromUser) {
+                items.add(item);
+            }
+        }
+        return items;
     }
 
     @Override
     public List<Item> searchItemForRent(String text) {
-        return itemsByUsers.values()
-                .stream()
-                .flatMap(List::stream)
-                .filter(item -> item.getAvailable().equals(true))
-                .filter(item -> item.getDescription().toLowerCase().contains(text))
-                .collect(Collectors.toList());
+        List<Item> items = new ArrayList<>();
+        for (Item item : allItems.values()) {
+            boolean isInName = item.getName().toLowerCase().contains(text);
+            boolean isInDescription = item.getDescription().toLowerCase().contains(text);
+            boolean isAvailable = item.getAvailable().equals(true);
+            if ((isInName || isInDescription) && isAvailable) {
+                items.add(item);
+            }
+        }
+        return items;
     }
 
     private Integer addId() {

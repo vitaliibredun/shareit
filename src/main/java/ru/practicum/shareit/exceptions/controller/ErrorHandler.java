@@ -23,19 +23,7 @@ public class ErrorHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.CONFLICT)
-    public ErrorResponse handleEmailAlreadyExist(final EmailAlreadyExistException exception) {
-        return new ErrorResponse(exception.getMessage());
-    }
-
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleEmailFieldIsEmpty(final EmailFieldIsEmptyException exception) {
-        return new ErrorResponse(exception.getMessage());
-    }
-
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleIncorrectTypeEmail(final IncorrectTypeEmailException exception) {
+    public ErrorResponse handleEmailAlreadyExistException(final EmailAlreadyExistException exception) {
         return new ErrorResponse(exception.getMessage());
     }
 
@@ -47,19 +35,7 @@ public class ErrorHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleAvailabilityFieldEmptyException(final AvailabilityFieldEmptyException exception) {
-        return new ErrorResponse(exception.getMessage());
-    }
-
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleNameFieldEmptyException(final NameFieldEmptyException exception) {
-        return new ErrorResponse(exception.getMessage());
-    }
-
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleDescriptionFieldEmptyException(final DescriptionFieldEmptyException exception) {
+    public ErrorResponse handleValidationException(final ValidationException exception) {
         return new ErrorResponse(exception.getMessage());
     }
 }

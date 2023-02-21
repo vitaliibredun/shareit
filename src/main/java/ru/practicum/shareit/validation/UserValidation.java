@@ -4,8 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import ru.practicum.shareit.exceptions.EmailAlreadyExistException;
-import ru.practicum.shareit.exceptions.EmailFieldIsEmptyException;
-import ru.practicum.shareit.exceptions.IncorrectTypeEmailException;
+import ru.practicum.shareit.exceptions.ValidationException;
 import ru.practicum.shareit.user.dao.UserStorage;
 import ru.practicum.shareit.user.dto.UserDto;
 
@@ -58,7 +57,7 @@ public class UserValidation {
         boolean emptyEmail = userDto.getEmail() == null;
         if (emptyEmail) {
             log.error("Validation failed. The email field is empty");
-            throw new EmailFieldIsEmptyException("The email field is empty");
+            throw new ValidationException("The email field is empty");
         }
     }
 
@@ -66,7 +65,7 @@ public class UserValidation {
         boolean incorrectType = Objects.requireNonNull(userDto.getEmail()).contains("@");
         if (!incorrectType) {
             log.error("Validation failed. The incorrect type of email {}", userDto.getEmail());
-            throw new IncorrectTypeEmailException("The incorrect type of email");
+            throw new ValidationException("The incorrect type of email");
         }
     }
 }

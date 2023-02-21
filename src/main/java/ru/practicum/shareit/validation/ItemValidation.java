@@ -37,7 +37,7 @@ public class ItemValidation {
     }
 
     private void checkUserExist(Integer userId) {
-        boolean userExist = userStorage.findAllUsers().stream().anyMatch(user -> user.getId().equals(userId));
+        boolean userExist = userStorage.findUser(userId) != null;
         if (!userExist) {
             log.error("Validation failed. The user with the id doesn't exists {}", userId);
             throw new UserNotFoundException("The user with the id doesn't exists");
@@ -48,7 +48,7 @@ public class ItemValidation {
         boolean fieldAvailabilityIsEmpty = itemDto.getAvailable() == null;
         if (fieldAvailabilityIsEmpty) {
             log.error("Validation failed. The field of availability is empty");
-            throw new AvailabilityFieldEmptyException("The field of availability is empty");
+            throw new ValidationException("The field of availability is empty");
         }
     }
 
@@ -56,7 +56,7 @@ public class ItemValidation {
         boolean fieldNameIsEmpty = itemDto.getName() == null || itemDto.getName().isEmpty();
         if (fieldNameIsEmpty) {
             log.error("Validation failed. The field of name is empty");
-            throw new NameFieldEmptyException("The field of name is empty");
+            throw new ValidationException("The field of name is empty");
         }
     }
 
@@ -64,7 +64,7 @@ public class ItemValidation {
         boolean fieldDescriptionIsEmpty = itemDto.getDescription() == null;
         if (fieldDescriptionIsEmpty) {
             log.error("Validation failed. The field of description is empty");
-            throw new DescriptionFieldEmptyException("The field of description is empty");
+            throw new ValidationException("The field of description is empty");
         }
     }
 }
