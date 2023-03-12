@@ -9,6 +9,7 @@ This is a Spring Boot application allows users to add items and share them with 
 
 ## Technologies
 * Spring Boot
+* Hibernate
 * Maven
 * Lombok
  
