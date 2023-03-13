@@ -1,13 +1,13 @@
-package ru.practicum.shareit.item.dao.impl;
+package ru.practicum.shareit.item.repository.impl;
 
 import org.springframework.stereotype.Component;
-import ru.practicum.shareit.item.dao.ItemStorage;
+import ru.practicum.shareit.item.repository.ItemStorage;
 import ru.practicum.shareit.item.model.Item;
 
 import java.util.*;
 
 @Component("itemStorageInMemory")
-public class ItemStorageInMemory implements ItemStorage {
+public class ItemStorageImpl implements ItemStorage {
     private final Map<Integer, Item> allItems = new HashMap<>();
     private Integer itemId = 0;
 

@@ -1,13 +1,13 @@
-package ru.practicum.shareit.user.dao.impl;
+package ru.practicum.shareit.user.repository.impl;
 
 import org.springframework.stereotype.Component;
-import ru.practicum.shareit.user.dao.UserStorage;
+import ru.practicum.shareit.user.repository.UserStorage;
 import ru.practicum.shareit.user.model.User;
 
 import java.util.*;
 
 @Component("userStorageInMemory")
-public class UserStorageInMemory implements UserStorage {
+public class UserStorageImpl implements UserStorage {
     private final Map<Integer, User> users = new HashMap<>();
     private Integer counter = 0;
 
