@@ -22,3 +22,7 @@ To get started with this project, you will need to have the following installed 
 To build and run the project, follow these steps:
 
 * Clone the repository: `git clone https://github.com/vitaliibredun/java-shareit.git`
+
+## ER diagram
+
+The structure of a database here: [ER diagram](https://github.com/vitaliibredun/java-shareit/wiki/ER-diagram)
