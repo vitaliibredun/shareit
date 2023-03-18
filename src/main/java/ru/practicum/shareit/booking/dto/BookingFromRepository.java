@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 @Data
 @Builder
 @AllArgsConstructor
+@NoArgsConstructor
 public class BookingFromRepository {
     private Integer bookingId;
     private Integer itemId;
