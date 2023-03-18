@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.user.model.User;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -20,10 +22,12 @@ public class Comment {
     private Integer id;
     @Column(name = "text")
     private String text;
-    @Column(name = "item_id")
-    private Integer itemId;
-    @Column(name = "author_id")
-    private Integer authorId;
+    @ManyToOne
+    @JoinColumn(name = "item_id", referencedColumnName = "id")
+    private Item item;
+    @ManyToOne
+    @JoinColumn(name = "author_id", referencedColumnName = "id")
+    private User author;
     @Column(name = "created")
     private LocalDateTime created = LocalDateTime.now();
 }

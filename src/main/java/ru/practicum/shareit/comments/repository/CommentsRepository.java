@@ -10,9 +10,8 @@ import java.util.List;
 public interface CommentsRepository extends JpaRepository<Comment, Integer> {
 
     @Query("select new ru.practicum.shareit.comments.dto.CommentInfo" +
-            "(c.id, c.text, u.name, c.created) " +
+            "(c.id, c.text, c.author.name, c.created) " +
             "from Comment c " +
-            "inner join User u on c.authorId = u.id " +
-            "where c.itemId = ?1")
+            "where c.item.id = ?1")
     List<CommentInfo> findAllByItemId(Integer itemId);
 }

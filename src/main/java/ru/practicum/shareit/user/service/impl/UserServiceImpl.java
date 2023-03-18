@@ -2,15 +2,14 @@ package ru.practicum.shareit.user.service.impl;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import ru.practicum.shareit.user.dto.mapper.UserMapper;
 import ru.practicum.shareit.user.repository.UserRepository;
 import ru.practicum.shareit.user.dto.UserDto;
-import ru.practicum.shareit.user.dto.mapper.UserMapper;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.service.UserService;
-import ru.practicum.shareit.validation.UserValidation;
+import ru.practicum.shareit.user.validation.UserValidation;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service("userServiceImpl")
@@ -20,8 +19,7 @@ public class UserServiceImpl implements UserService {
     private final UserMapper mapper;
 
     public UserServiceImpl(UserRepository repository,
-                           @Qualifier("userValidationRepository") UserValidation validation,
-                           UserMapper mapper) {
+                           @Qualifier("userValidationRepository") UserValidation validation, UserMapper mapper) {
         this.repository = repository;
         this.validation = validation;
         this.mapper = mapper;
@@ -29,7 +27,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto createUser(UserDto userDto) {
-        validation.checkUserData(userDto);
         User user = mapper.toModel(userDto);
         User userFromRepository = repository.save(user);
         return mapper.toDto(userFromRepository);
@@ -37,9 +34,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto findUser(Integer userId) {
-        validation.checkUserExist(userId);
-        User userFromStorage = repository.findById(userId).orElseThrow();
-        return mapper.toDto(userFromStorage);
+        User user = validation.checkUserExist(userId);
+        return mapper.toDto(user);
     }
 
     @Override
@@ -52,20 +48,15 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto updateUser(Integer userId, UserDto userDto) {
-        User user = mapper.toModel(userDto);
-        Optional<User> optionalUser = repository.findById(userId);
-        if (optionalUser.isPresent()) {
-            User userFromRepository = optionalUser.get();
-            if (user.getName() != null) {
-                userFromRepository.setName(user.getName());
-                repository.saveAndFlush(userFromRepository);
-            }
-            if (user.getEmail() != null) {
-                userFromRepository.setEmail(user.getEmail());
-                repository.saveAndFlush(userFromRepository);
-            }
+        User user = validation.checkUserExist(userId);
+        if (userDto.getName() != null) {
+            user.setName(userDto.getName());
         }
-        return mapper.toDto(optionalUser.orElseThrow());
+        if (userDto.getEmail() != null) {
+            user.setEmail(userDto.getEmail());
+        }
+        User userFromRepository = repository.saveAndFlush(user);
+        return mapper.toDto(userFromRepository);
     }
 
     @Override

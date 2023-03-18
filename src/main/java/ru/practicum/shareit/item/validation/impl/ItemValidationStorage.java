@@ -1,4 +1,4 @@
-package ru.practicum.shareit.validation.impl;
+package ru.practicum.shareit.item.validation.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -7,8 +7,9 @@ import ru.practicum.shareit.exceptions.*;
 import ru.practicum.shareit.item.repository.ItemStorage;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserStorage;
-import ru.practicum.shareit.validation.ItemValidation;
+import ru.practicum.shareit.item.validation.ItemValidation;
 
 @Component
 @Slf4j
@@ -23,33 +24,36 @@ public class ItemValidationStorage implements ItemValidation {
     }
 
     @Override
-    public void checkItemData(Integer userId, ItemDto itemDto) {
-        checkUserExist(userId);
+    public User checkItemData(Integer userId, ItemDto itemDto) {
+        User user = checkUserExist(userId);
         checkFieldAvailability(itemDto);
         checkFieldName(itemDto);
         checkFieldDescription(itemDto);
+        return user;
     }
 
     @Override
-    public void checkOwnerOfItem(Integer userId, Integer itemId) {
+    public Item checkOwnerOfItem(Integer userId, Integer itemId) {
         Item item = itemStorage.findItem(itemId);
-        if (!item.getOwner().equals(userId)) {
+        if (!item.getOwner().getId().equals(userId)) {
             log.error("Validation failed. The wrong owner with id {} of item {}", userId, item);
             throw new WrongOwnerOfItemException("The wrong owner of item");
         }
+        return item;
     }
 
     @Override
-    public void checkIfItemExist(Integer itemId) {
+    public Item checkIfItemExist(Integer itemId) {
         throw new IllegalArgumentException("Not implemented");
     }
 
-    private void checkUserExist(Integer userId) {
-        boolean userExist = userStorage.findUser(userId) != null;
-        if (!userExist) {
+    private User checkUserExist(Integer userId) {
+        User user = userStorage.findUser(userId);
+        if (user == null) {
             log.error("Validation failed. The user with the id doesn't exists {}", userId);
             throw new UserNotFoundException("The user with the id doesn't exists");
         }
+        return user;
     }
 
     private void checkFieldAvailability(ItemDto itemDto) {

@@ -19,6 +19,6 @@ public interface ItemRepository extends JpaRepository<Item, Integer> {
 
     @Query("select i " +
             "from Item i " +
-            "where i.owner = ?1")
+            "where i.owner.id = ?1")
     List<Item> findAllByUser(Integer userId);
 }

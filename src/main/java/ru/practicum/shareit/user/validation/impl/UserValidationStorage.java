@@ -1,13 +1,14 @@
-package ru.practicum.shareit.validation.impl;
+package ru.practicum.shareit.user.validation.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import ru.practicum.shareit.exceptions.EmailAlreadyExistException;
 import ru.practicum.shareit.exceptions.ValidationException;
+import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserStorage;
 import ru.practicum.shareit.user.dto.UserDto;
-import ru.practicum.shareit.validation.UserValidation;
+import ru.practicum.shareit.user.validation.UserValidation;
 
 import java.util.Objects;
 
@@ -21,14 +22,14 @@ public class UserValidationStorage implements UserValidation {
     }
 
     @Override
-    public void checkUserData(UserDto userDto) {
+    public void checkIfEmailAlreadyExist(UserDto userDto) {
         checkEmptyEmail(userDto);
         checkIncorrectType(userDto);
         checkSameEmailWithAnotherUser(userDto);
     }
 
     @Override
-    public void checkUserExist(Integer userId) {
+    public User checkUserExist(Integer userId) {
         throw new IllegalArgumentException("Not implemented");
     }
 

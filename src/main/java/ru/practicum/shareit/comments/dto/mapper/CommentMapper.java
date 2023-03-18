@@ -1,30 +1,38 @@
 package ru.practicum.shareit.comments.dto.mapper;
 
-import org.springframework.stereotype.Component;
+import org.mapstruct.Mapper;
 import ru.practicum.shareit.comments.dto.CommentDto;
 import ru.practicum.shareit.comments.model.Comment;
 import ru.practicum.shareit.user.model.User;
 
-@Component
-public class CommentMapper {
-    public CommentDto toDto(Comment comment, User user) {
-        return CommentDto
-                .builder()
-                .id(comment.getId())
-                .text(comment.getText())
-                .author(comment.getAuthorId())
-                .authorName(user.getName())
-                .created(comment.getCreated())
-                .build();
+@Mapper
+public interface CommentMapper {
+    default CommentDto toDto(Comment comment, User user) {
+        if (comment == null || user == null) {
+            return null;
+        }
+
+        CommentDto.CommentDtoBuilder commentDtoBuilder = CommentDto.builder();
+
+        commentDtoBuilder.id(comment.getId());
+        commentDtoBuilder.text(comment.getText());
+        commentDtoBuilder.authorName(user.getName());
+        commentDtoBuilder.created(comment.getCreated());
+
+        return commentDtoBuilder.build();
     }
 
-    public Comment toModel(CommentDto commentDto) {
-        return Comment
-                .builder()
-                .id(commentDto.getId())
-                .text(commentDto.getText())
-                .authorId(commentDto.getAuthor())
-                .created(commentDto.getCreated())
-                .build();
+    default Comment toModel(CommentDto commentDto) {
+        if (commentDto == null) {
+            return null;
+        }
+
+        Comment.CommentBuilder commentBuilder = Comment.builder();
+
+        commentBuilder.id(commentDto.getId());
+        commentBuilder.text(commentDto.getText());
+        commentBuilder.created(commentDto.getCreated());
+
+        return commentBuilder.build();
     }
 }

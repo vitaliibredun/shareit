@@ -2,173 +2,142 @@ package ru.practicum.shareit.booking.service.impl;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import ru.practicum.shareit.booking.dto.mapper.BookingMapper;
 import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.booking.dto.BookingDto;
-import ru.practicum.shareit.booking.dto.BookingShortInfo;
-import ru.practicum.shareit.booking.dto.mapper.BookingMapper;
+import ru.practicum.shareit.booking.dto.BookingInfo;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.constants.BookingStatus;
 import ru.practicum.shareit.booking.service.BookingService;
-import ru.practicum.shareit.exceptions.BookingNotFoundException;
 import ru.practicum.shareit.exceptions.ValidationException;
-import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.item.model.Item;
-import ru.practicum.shareit.user.repository.UserRepository;
 import ru.practicum.shareit.user.model.User;
-import ru.practicum.shareit.validation.BookingValidation;
-import ru.practicum.shareit.validation.ItemValidation;
-import ru.practicum.shareit.validation.UserValidation;
+import ru.practicum.shareit.booking.validation.BookingValidation;
+import ru.practicum.shareit.user.validation.UserValidation;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service("bookingServiceImpl")
 public class BookingServiceImpl implements BookingService {
-    private final BookingRepository bookingRepository;
-    private final ItemRepository itemRepository;
-    private final UserRepository userRepository;
-    private final BookingMapper mapper;
-    private final ItemValidation itemValidation;
+    private final BookingRepository repository;
     private final BookingValidation bookingValidation;
     private final UserValidation userValidation;
+    private final BookingMapper mapper;
 
-    public BookingServiceImpl(BookingRepository bookingRepository,
-                              ItemRepository itemRepository, UserRepository userRepository, BookingMapper mapper,
-                              @Qualifier("itemValidationRepository") ItemValidation itemValidation,
+    public BookingServiceImpl(BookingRepository repository,
                               BookingValidation bookingValidation,
-                              @Qualifier("userValidationRepository") UserValidation userValidation) {
-        this.bookingRepository = bookingRepository;
-        this.itemRepository = itemRepository;
-        this.userRepository = userRepository;
-        this.mapper = mapper;
-        this.itemValidation = itemValidation;
+                              @Qualifier("userValidationRepository") UserValidation userValidation,
+                              BookingMapper mapper) {
+        this.repository = repository;
         this.bookingValidation = bookingValidation;
         this.userValidation = userValidation;
+        this.mapper = mapper;
     }
 
     @Override
-    public BookingShortInfo createBooking(Integer userId, BookingDto bookingDto) {
-        bookingValidation.checkIfCustomerIsOwnerOfBooking(userId, bookingDto);
-        bookingValidation.checkIfItemAvailable(bookingDto.getItemId());
-        bookingValidation.checkTimeBooking(bookingDto);
-        userValidation.checkUserExist(userId);
-        itemValidation.checkIfItemExist(bookingDto.getItemId());
-        Booking bookingToRepository = mapper.toModel(bookingDto);
-        bookingToRepository.setBooker(userId);
-        bookingToRepository.setStatus(BookingStatus.WAITING);
-        Booking booking = bookingRepository.save(bookingToRepository);
-        Item item = itemRepository.findById(booking.getItemId()).orElseThrow();
-        User user = userRepository.findById(booking.getBooker()).orElseThrow();
-        return mapper.toDtoInfo(booking, item, user);
+    public BookingInfo createBooking(Integer userId, BookingDto bookingDto) {
+        User user = userValidation.checkUserExist(userId);
+        Item item = bookingValidation.checkItemData(user, bookingDto);
+        Booking booking = mapper.toModel(bookingDto);
+        booking.setItem(item);
+        booking.setBooker(user);
+        booking.setStatus(BookingStatus.WAITING);
+        Booking bookingFromRepository = repository.save(booking);
+        return mapper.toDto(bookingFromRepository);
     }
 
     @Override
-    public BookingShortInfo approvingBooking(Integer userId, Integer bookingId, Boolean approved) {
-        bookingValidation.checkIfStatusAlreadyApproved(userId, bookingId, approved);
-        Optional<Booking> optionalBooking = bookingRepository.findById(bookingId);
-        if (optionalBooking.isPresent()) {
-            Booking booking = optionalBooking.get();
-            itemValidation.checkOwnerOfItem(userId, booking.getItemId());
-            if (approved) {
-                booking.setStatus(BookingStatus.APPROVED);
-                bookingRepository.saveAndFlush(booking);
-            }
-            if (!approved) {
-                booking.setStatus(BookingStatus.REJECTED);
-                bookingRepository.saveAndFlush(booking);
-            }
-            Item item = itemRepository.findById(booking.getItemId()).orElseThrow();
-            User user = userRepository.findById(booking.getBooker()).orElseThrow();
-            return mapper.toDtoInfo(booking, item, user);
+    public BookingInfo approvingBooking(Integer userId, Integer bookingId, Boolean approved) {
+        Booking booking = bookingValidation.checkIfStatusAlreadyApproved(userId, bookingId, approved);
+        if (approved) {
+            booking.setStatus(BookingStatus.APPROVED);
+            repository.saveAndFlush(booking);
         }
-        throw new BookingNotFoundException("The booking with the id doesn't exist");
-    }
-
-    @Override
-    public BookingShortInfo findBooking(Integer userId, Integer bookingId) {
-        bookingValidation.checkCustomerOfBooking(userId, bookingId);
-        Optional<Booking> optionalBooking = bookingRepository.findById(bookingId);
-        if (optionalBooking.isPresent()) {
-            Booking booking = optionalBooking.get();
-            Item item = itemRepository.findById(booking.getItemId()).orElseThrow();
-            User user = userRepository.findById(booking.getBooker()).orElseThrow();
-            return mapper.toDtoInfo(booking, item, user);
+        if (!approved) {
+            booking.setStatus(BookingStatus.REJECTED);
+            repository.saveAndFlush(booking);
         }
-        throw new BookingNotFoundException("The booking with the id doesn't exist");
+        return mapper.toDto(booking);
     }
 
     @Override
-    public List<BookingShortInfo> findAllBookingsCustomer(Integer userId, String state) {
+    public BookingInfo findBooking(Integer userId, Integer bookingId) {
+        Booking booking = bookingValidation.checkCustomerOfBooking(userId, bookingId);
+        return mapper.toDto(booking);
+    }
+
+    @Override
+    public List<BookingInfo> findAllBookingsCustomer(Integer userId, String state) {
         userValidation.checkUserExist(userId);
         switch (state) {
             case "CURRENT":
-                return bookingRepository.findAllCurrentByBooker(userId)
+                return repository.findAllCurrentByBooker(userId)
                         .stream()
-                        .map(mapper::toDtoInfoFromBookingInfo)
+                        .map(mapper::toDto)
                         .collect(Collectors.toList());
             case "PAST":
-                return bookingRepository.findAllPastByBooker(userId)
+                return repository.findAllPastByBooker(userId)
                         .stream()
-                        .map(mapper::toDtoInfoFromBookingInfo)
+                        .map(mapper::toDto)
                         .collect(Collectors.toList());
             case "FUTURE":
-                return bookingRepository.findAllFutureByBooker(userId)
+                return repository.findAllFutureByBooker(userId)
                         .stream()
-                        .map(mapper::toDtoInfoFromBookingInfo)
+                        .map(mapper::toDto)
                         .collect(Collectors.toList());
             case "WAITING":
-                return bookingRepository.findAllWaitingStatusByBooker(userId)
+                return repository.findAllWaitingStatusByBooker(userId)
                         .stream()
-                        .map(mapper::toDtoInfoFromBookingInfo)
+                        .map(mapper::toDto)
                         .collect(Collectors.toList());
             case "REJECTED":
-                return bookingRepository.findAllRejectedStatusByBooker(userId)
+                return repository.findAllRejectedStatusByBooker(userId)
                         .stream()
-                        .map(mapper::toDtoInfoFromBookingInfo)
+                        .map(mapper::toDto)
                         .collect(Collectors.toList());
             case "ALL":
-                return bookingRepository.findAllByBooker(userId)
+                return repository.findAllByBooker(userId)
                         .stream()
-                        .map(mapper::toDtoInfoFromBookingInfo)
+                        .map(mapper::toDto)
                         .collect(Collectors.toList());
         }
         throw new ValidationException("Unknown state: UNSUPPORTED_STATUS");
     }
 
     @Override
-    public List<BookingShortInfo> findAllBookingsOwner(Integer userId, String state) {
+    public List<BookingInfo> findAllBookingsOwner(Integer userId, String state) {
         userValidation.checkUserExist(userId);
         switch (state) {
             case "CURRENT":
-                return bookingRepository.findAllCurrentByOwner(userId)
+                return repository.findAllCurrentByOwner(userId)
                         .stream()
-                        .map(mapper::toDtoInfoFromBookingInfo)
+                        .map(mapper::toDto)
                         .collect(Collectors.toList());
             case "PAST":
-                return bookingRepository.findAllPastByOwner(userId)
+                return repository.findAllPastByOwner(userId)
                         .stream()
-                        .map(mapper::toDtoInfoFromBookingInfo)
+                        .map(mapper::toDto)
                         .collect(Collectors.toList());
             case "FUTURE":
-                return bookingRepository.findAllFutureByOwner(userId)
+                return repository.findAllFutureByOwner(userId)
                         .stream()
-                        .map(mapper::toDtoInfoFromBookingInfo)
+                        .map(mapper::toDto)
                         .collect(Collectors.toList());
             case "WAITING":
-                return bookingRepository.findAllWaitingStatusByOwner(userId)
+                return repository.findAllWaitingStatusByOwner(userId)
                         .stream()
-                        .map(mapper::toDtoInfoFromBookingInfo)
+                        .map(mapper::toDto)
                         .collect(Collectors.toList());
             case "REJECTED":
-                return bookingRepository.findAllRejectedStatusByOwner(userId)
+                return repository.findAllRejectedStatusByOwner(userId)
                         .stream()
-                        .map(mapper::toDtoInfoFromBookingInfo)
+                        .map(mapper::toDto)
                         .collect(Collectors.toList());
             case "ALL":
-                return bookingRepository.findAllByOwner(userId)
+                return repository.findAllByOwner(userId)
                         .stream()
-                        .map(mapper::toDtoInfoFromBookingInfo)
+                        .map(mapper::toDto)
                         .collect(Collectors.toList());
         }
         throw new ValidationException("Unknown state: UNSUPPORTED_STATUS");

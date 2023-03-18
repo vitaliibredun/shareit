@@ -1,4 +1,4 @@
-package ru.practicum.shareit.validation.impl;
+package ru.practicum.shareit.comments.validation.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -7,7 +7,7 @@ import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.comments.dto.CommentDto;
 import ru.practicum.shareit.exceptions.ValidationException;
-import ru.practicum.shareit.validation.CommentValidation;
+import ru.practicum.shareit.comments.validation.CommentValidation;
 
 import java.util.List;
 import java.util.Optional;
@@ -20,11 +20,6 @@ public class CommentValidationImpl implements CommentValidation {
 
     @Override
     public void checkUser(Integer userId, Integer itemId, CommentDto commentDto) {
-        if (commentDto.getText().isEmpty()) {
-            log.error("Validation failed. The text's comment is empty");
-            throw new ValidationException("The text's comment is empty");
-        }
-
         List<Optional<Booking>> bookings = bookingRepository.findByBookerAndItem(userId, itemId);
         if (bookings.isEmpty()) {
             log.error("Validation failed. The status of the booking is rejected");

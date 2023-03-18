@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ru.practicum.shareit.user.model.User;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -20,8 +21,9 @@ public class ItemRequest {
     private Integer id;
     @Column(name = "description")
     private String description;
-    @Column(name = "requestor")
-    private Integer requestor;
+    @ManyToOne
+    @JoinColumn(name = "requestor", referencedColumnName = "id")
+    private User requestor;
     @Column(name = "created")
     private LocalDateTime created = LocalDateTime.now();
 }

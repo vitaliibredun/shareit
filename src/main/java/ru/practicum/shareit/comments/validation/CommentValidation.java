@@ -1,4 +1,4 @@
-package ru.practicum.shareit.validation;
+package ru.practicum.shareit.comments.validation;
 
 import ru.practicum.shareit.comments.dto.CommentDto;
 

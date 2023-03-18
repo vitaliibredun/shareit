@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 
+import javax.validation.constraints.NotEmpty;
 import java.time.LocalDateTime;
 
 @Data
@@ -11,8 +12,8 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class CommentDto {
     private Integer id;
+    @NotEmpty(message = "The text's comment is empty")
     private String text;
-    private Integer author;
     private String authorName;
     @Builder.Default
     private LocalDateTime created = LocalDateTime.now();

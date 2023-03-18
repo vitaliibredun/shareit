@@ -1,22 +1,20 @@
 package ru.practicum.shareit.booking.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
+import lombok.*;
 import ru.practicum.shareit.booking.model.constants.BookingStatus;
-import ru.practicum.shareit.item.model.Item;
-import ru.practicum.shareit.user.dto.Booker;
 
 import java.time.LocalDateTime;
 
 @Data
 @Builder
 @AllArgsConstructor
-public class BookingShortInfo {
-    private Integer id;
-    private Item item;
+public class BookingFromRepository {
+    private Integer bookingId;
+    private Integer itemId;
+    private String name;
     private LocalDateTime start;
     private LocalDateTime end;
-    private Booker booker;
+    private Integer bookerId;
+    private String  bookerName;
     private BookingStatus status;
 }
