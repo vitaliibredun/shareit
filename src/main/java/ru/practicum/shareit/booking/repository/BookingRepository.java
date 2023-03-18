@@ -121,11 +121,11 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
     List<BookingFromRepository> findAllRejectedStatusByOwner(Integer userId);
 
     @Query("select new ru.practicum.shareit.booking.dto.LastBooking" +
-            "(b1.id, b1.booker.id, b1.end) " +
+            "(b1.id, b1.booker.id, b1.start) " +
             "from Booking b1 " +
             "where b1.item.id = ?1 " +
             "and " +
-            "b1.end = (select max (b2.end) from Booking b2 where b2.end < current_timestamp)")
+            "b1.start = (select max (b2.start) from Booking b2 where b2.start < current_timestamp)")
     LastBooking findLastBooking(Integer itemId);
 
     @Query("select new ru.practicum.shareit.booking.dto.NextBooking" +
