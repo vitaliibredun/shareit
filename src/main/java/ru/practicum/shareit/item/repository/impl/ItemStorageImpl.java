@@ -1,20 +1,21 @@
-package ru.practicum.shareit.item.dao.impl;
+package ru.practicum.shareit.item.repository.impl;
 
 import org.springframework.stereotype.Component;
-import ru.practicum.shareit.item.dao.ItemStorage;
+import ru.practicum.shareit.item.repository.ItemStorage;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.user.model.User;
 
 import java.util.*;
 
 @Component("itemStorageInMemory")
-public class ItemStorageInMemory implements ItemStorage {
+public class ItemStorageImpl implements ItemStorage {
     private final Map<Integer, Item> allItems = new HashMap<>();
     private Integer itemId = 0;
 
     @Override
     public Item createItem(Integer userId, Item item) {
         item.setId(addId());
-        item.setOwner(userId);
+        item.setOwner(User.builder().id(userId).build());
         allItems.put(itemId, item);
         return allItems.get(item.getId());
     }
@@ -69,7 +70,7 @@ public class ItemStorageInMemory implements ItemStorage {
     public List<Item> findAllItemsByUser(Integer userId) {
         List<Item> items = new ArrayList<>();
         for (Item item : allItems.values()) {
-            boolean itemFromUser = item.getOwner().equals(userId);
+            boolean itemFromUser = item.getOwner().getId().equals(userId);
             if (itemFromUser) {
                 items.add(item);
             }
