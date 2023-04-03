@@ -8,7 +8,9 @@ import ru.practicum.shareit.user.model.User;
 public interface BookingValidation {
     Item checkItemData(User user, BookingDto bookingDto);
 
-    Booking checkCustomerOfBooking(Integer userId, Integer bookingId);
+    Booking checkBookingData(Integer userId, Integer bookingId);
 
     Booking checkIfStatusAlreadyApproved(Integer userId, Integer bookingId, Boolean approved);
+
+    void checkPaginationInput(Integer from, Integer size);
 }

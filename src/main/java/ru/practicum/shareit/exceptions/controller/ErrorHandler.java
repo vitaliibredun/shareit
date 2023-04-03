@@ -80,6 +80,13 @@ public class ErrorHandler {
         return new ErrorResponse(exception.getMessage());
     }
 
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse handleRequestNotFoundException(final RequestNotFoundException exception) {
+        log.warn("404 {}", exception.getMessage(), exception);
+        return new ErrorResponse(exception.getMessage());
+    }
+
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public Map<String, String> handleValidationExceptions(

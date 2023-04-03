@@ -20,4 +20,5 @@ public class ItemDto {
     private String description;
     @NotNull(message = "The field of availability is empty")
     private Boolean available;
+    private Integer requestId;
 }

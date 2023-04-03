@@ -15,7 +15,7 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
     @Query("select new ru.practicum.shareit.booking.dto.BookingFromRepository" +
             "(b.id, b.item.id, b.item.name, b.start, b.end, b.booker.id, b.booker.name, b.status) " +
             "from Booking b " +
-            "where b.booker.id = ?1 " +
+            "where b.booker.id = ?1  " +
             "group by b.id " +
             "order by b.start desc")
     List<BookingFromRepository> findAllByBooker(Integer userId);
@@ -52,7 +52,7 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
             "(b.id, b.item.id, b.item.name, b.start, b.end, b.booker.id, b.booker.name, b.status) " +
             "from Booking b " +
             "where b.booker.id = ?1 " +
-            "and b.status = ru.practicum.shareit.booking.model.constants.BookingStatus.WAITING " +
+            "and b.status = ru.practicum.shareit.booking.constants.BookingStatus.WAITING " +
             "group by b.id " +
             "order by b.start desc")
     List<BookingFromRepository> findAllWaitingStatusByBooker(Integer userId);
@@ -61,7 +61,7 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
             "(b.id, b.item.id, b.item.name, b.start, b.end, b.booker.id, b.booker.name, b.status) " +
             "from Booking b " +
             "where b.booker.id = ?1 " +
-            "and b.status = ru.practicum.shareit.booking.model.constants.BookingStatus.REJECTED " +
+            "and b.status = ru.practicum.shareit.booking.constants.BookingStatus.REJECTED " +
             "group by b.id " +
             "order by b.start desc")
     List<BookingFromRepository> findAllRejectedStatusByBooker(Integer userId);
@@ -106,7 +106,7 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
             "(b.id, b.item.id, b.item.name, b.start, b.end, b.booker.id, b.booker.name, b.status) " +
             "from Booking b " +
             "where b.item.owner.id = ?1 " +
-            "and b.status = ru.practicum.shareit.booking.model.constants.BookingStatus.WAITING " +
+            "and b.status = ru.practicum.shareit.booking.constants.BookingStatus.WAITING " +
             "group by b.id " +
             "order by b.start desc")
     List<BookingFromRepository> findAllWaitingStatusByOwner(Integer userId);
@@ -115,7 +115,7 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
             "(b.id, b.item.id, b.item.name, b.start, b.end, b.booker.id, b.booker.name, b.status) " +
             "from Booking b " +
             "where b.item.owner.id = ?1 " +
-            "and b.status = ru.practicum.shareit.booking.model.constants.BookingStatus.REJECTED " +
+            "and b.status = ru.practicum.shareit.booking.constants.BookingStatus.REJECTED " +
             "group by b.id " +
             "order by b.start desc")
     List<BookingFromRepository> findAllRejectedStatusByOwner(Integer userId);
@@ -140,7 +140,7 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
             "from Booking b " +
             "where b.booker.id = ?1 " +
             "and b.item.id = ?2 " +
-            "and b.status = ru.practicum.shareit.booking.model.constants.BookingStatus.APPROVED " +
+            "and b.status = ru.practicum.shareit.booking.constants.BookingStatus.APPROVED " +
             "and b.end < current_timestamp ")
     List<Optional<Booking>> findByBookerAndItem(Integer userId, Integer itemId);
 }

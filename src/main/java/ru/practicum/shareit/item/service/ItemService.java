@@ -13,9 +13,9 @@ public interface ItemService {
 
     ItemInfo findItem(Integer userId, Integer itemId);
 
-    List<ItemInfo> findAllItemsByUser(Integer userId);
+    List<ItemInfo> findAllItemsByUser(Integer userId, Integer from, Integer size);
 
-    List<ItemDto> searchItemForRent(String text);
+    List<ItemDto> searchItemForRent(String text, Integer from, Integer size);
 
     CommentDto addComment(Integer userId, Integer itemId, CommentDto commentDto);
 }
