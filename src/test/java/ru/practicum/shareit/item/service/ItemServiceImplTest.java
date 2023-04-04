@@ -11,6 +11,8 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.constants.BookingStatus;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.repository.BookingRepository;
+import ru.practicum.shareit.comments.dto.CommentDto;
+import ru.practicum.shareit.comments.repository.CommentsRepository;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemInfo;
 import ru.practicum.shareit.item.mapper.ItemMapper;
@@ -39,6 +41,7 @@ public class ItemServiceImplTest {
     private final ItemService service;
     private final ItemRepository repository;
     private final UserRepository userRepository;
+    private final CommentsRepository commentsRepository;
     private final BookingRepository bookingRepository;
     private final RequestRepository requestRepository;
     private final EntityManager entityManager;
@@ -75,16 +78,16 @@ public class ItemServiceImplTest {
 
         assertThat(repository.findAll(), empty());
 
-        User userToSave = makeUser("Timmy", "mail@email.com");
-        User user = userRepository.save(userToSave);
-        Item itemToSave = makeItem("Item1", "For something", true, user);
-        Item itemFromRepository = repository.save(itemToSave);
+        Item item = makeItem("Item1", "For something", true, user);
+        ItemDto itemDto = mapper.toDto(item);
+
+        ItemDto itemFromRepository = service.createItem(user.getId(), itemDto);
 
         assertThat(itemFromRepository.getId(), notNullValue());
-        assertThat(itemFromRepository.getRequest(), nullValue());
-        assertThat(itemToSave.getName(), is(itemFromRepository.getName()));
-        assertThat(itemToSave.getDescription(), is(itemFromRepository.getDescription()));
-        assertThat(itemToSave.getAvailable(), is(itemFromRepository.getAvailable()));
+        assertThat(itemFromRepository.getRequestId(), nullValue());
+        assertThat(item.getName(), is(itemFromRepository.getName()));
+        assertThat(item.getDescription(), is(itemFromRepository.getDescription()));
+        assertThat(item.getAvailable(), is(itemFromRepository.getAvailable()));
     }
 
     @Test
@@ -93,15 +96,18 @@ public class ItemServiceImplTest {
 
         ItemRequest requestToSave = ItemRequest.builder().description("I need a hammer").requestor(booker).build();
         ItemRequest request = requestRepository.save(requestToSave);
-        ItemDto itemDto = makeItemDto(request.getId(), "Hammer", "The best hammer", true);
-        Item newItem = mapper.toModel(itemDto, request);
-        newItem.setOwner(user);
-        Item itemFromRepository = repository.save(newItem);
+        Item item = makeItem("Item2", "For something great", true, user);
+        item.setRequest(request);
+        ItemDto itemDto = mapper.toDto(item);
+
+        ItemDto itemFromRepository = service.createItem(user.getId(), itemDto);
 
         assertThat(itemFromRepository.getId(), notNullValue());
-        assertThat(itemFromRepository.getRequest(), notNullValue());
-        assertThat(request.getId(), is(itemFromRepository.getRequest().getId()));
-        assertThat(request.getRequestor().getId(), is(itemFromRepository.getRequest().getRequestor().getId()));
+        assertThat(itemFromRepository.getRequestId(), notNullValue());
+        assertThat(itemFromRepository.getRequestId(), is(request.getId()));
+        assertThat(item.getName(), is(itemFromRepository.getName()));
+        assertThat(item.getDescription(), is(itemFromRepository.getDescription()));
+        assertThat(item.getAvailable(), is(itemFromRepository.getAvailable()));
     }
 
     @Test
@@ -109,6 +115,7 @@ public class ItemServiceImplTest {
         assertThat(repository.findAll(), notNullValue());
 
         ItemDto itemWithNewName = ItemDto.builder().name("Item2").build();
+
         ItemDto itemFromRepository = service.updateItem(userDto.getId(), itemDto.getId(), itemWithNewName);
 
         assertThat(itemDto.getId(), is(itemFromRepository.getId()));
@@ -122,6 +129,7 @@ public class ItemServiceImplTest {
         assertThat(repository.findAll(), notNullValue());
 
         ItemDto itemWithNewDescription = ItemDto.builder().description("For something new").build();
+
         ItemDto itemFromRepository = service.updateItem(userDto.getId(), itemDto.getId(), itemWithNewDescription);
 
         assertThat(itemDto.getId(), is(itemFromRepository.getId()));
@@ -135,6 +143,7 @@ public class ItemServiceImplTest {
         assertThat(repository.findAll(), notNullValue());
 
         ItemDto itemWithNewAvailability = ItemDto.builder().available(false).build();
+
         ItemDto itemFromRepository = service.updateItem(userDto.getId(), itemDto.getId(), itemWithNewAvailability);
 
         assertThat(itemDto.getId(), is(itemFromRepository.getId()));
@@ -148,6 +157,7 @@ public class ItemServiceImplTest {
         assertThat(repository.findAll(), notNullValue());
 
         ItemDto newItem = ItemDto.builder().name("New Item").description("Something new").available(false).build();
+
         ItemDto itemFromRepository = service.updateItem(userDto.getId(), itemDto.getId(), newItem);
 
         assertThat(itemDto.getId(), is(itemFromRepository.getId()));
@@ -162,6 +172,7 @@ public class ItemServiceImplTest {
 
         Booking booking = makeBooking(item, booker);
         bookingRepository.save(booking);
+
         ItemInfo itemInfo = service.findItem(userDto.getId(), itemDto.getId());
 
         assertThat(itemDto.getId(), is(itemInfo.getId()));
@@ -173,11 +184,71 @@ public class ItemServiceImplTest {
     }
 
     @Test
+    void findAllItemsByUserTest() {
+        Integer expectedSize = 1;
+
+        List<ItemInfo> items = service.findAllItemsByUser(userDto.getId(), 0, 10);
+
+        assertThat(items.size(), is(expectedSize));
+        assertThat(itemDto.getId(), is(items.get(0).getId()));
+        assertThat(itemDto.getDescription(), is(items.get(0).getDescription()));
+        assertThat(itemDto.getAvailable(), is(items.get(0).getAvailable()));
+        assertThat(items.get(0).getComments(), empty());
+        assertThat(items.get(0).getLastBooking(), nullValue());
+        assertThat(items.get(0).getNextBooking(), nullValue());
+    }
+
+    @Test
+    void findAllItemsByUserWithBookingTest() {
+        Integer expectedSize = 1;
+
+        Booking booking = makeBooking(item, booker);
+        bookingRepository.save(booking);
+
+        List<ItemInfo> items = service.findAllItemsByUser(userDto.getId(), 0, 10);
+
+        assertThat(items.size(), is(expectedSize));
+        assertThat(itemDto.getId(), is(items.get(0).getId()));
+        assertThat(itemDto.getDescription(), is(items.get(0).getDescription()));
+        assertThat(itemDto.getAvailable(), is(items.get(0).getAvailable()));
+        assertThat(items.get(0).getComments(), empty());
+        assertThat(items.get(0).getLastBooking(), nullValue());
+        assertThat(items.get(0).getNextBooking(), notNullValue());
+        assertThat(booking.getBooker().getId(), is(items.get(0).getNextBooking().getBookerId()));
+    }
+
+    @Test
+    void findAllItemsByUserWithBookingAndCommentTest() {
+        Integer expectedSize = 1;
+
+        Booking booking = makeBooking(item, booker);
+        booking.setStatus(BookingStatus.APPROVED);
+        booking.setStart(LocalDateTime.now().minusDays(2));
+        booking.setEnd(LocalDateTime.now().minusDays(1));
+        bookingRepository.save(booking);
+        CommentDto commentDto = makeCommentDto("Thanks a lot", booker.getName());
+        service.addComment(booker.getId(), item.getId(), commentDto);
+
+        List<ItemInfo> items = service.findAllItemsByUser(userDto.getId(), 0, 10);
+
+        assertThat(items.size(), is(expectedSize));
+        assertThat(itemDto.getId(), is(items.get(0).getId()));
+        assertThat(itemDto.getDescription(), is(items.get(0).getDescription()));
+        assertThat(itemDto.getAvailable(), is(items.get(0).getAvailable()));
+        assertThat(items.get(0).getComments(), notNullValue());
+        assertThat(items.get(0).getComments().get(0).getAuthorName(), is(commentDto.getAuthorName()));
+        assertThat(items.get(0).getLastBooking(), notNullValue());
+        assertThat(items.get(0).getLastBooking().getBookerId(), is(items.get(0).getLastBooking().getBookerId()));
+        assertThat(items.get(0).getNextBooking(), nullValue());
+    }
+
+    @Test
     void findItemByBookerTest() {
         assertThat(repository.findAll(), notNullValue());
 
         Booking booking = makeBooking(item, booker);
         bookingRepository.save(booking);
+
         ItemInfo itemInfo = service.findItem(booker.getId(), itemDto.getId());
 
         assertThat(itemDto.getId(), is(itemInfo.getId()));
@@ -209,6 +280,33 @@ public class ItemServiceImplTest {
         assertThat(itemDtoList, empty());
     }
 
+    @Test
+    void addCommentTest() {
+        assertThat(commentsRepository.findAll(), empty());
+
+        Booking booking = makeBooking(item, booker);
+        booking.setStatus(BookingStatus.APPROVED);
+        booking.setStart(LocalDateTime.now().minusDays(2));
+        booking.setEnd(LocalDateTime.now().minusDays(1));
+        bookingRepository.save(booking);
+        CommentDto commentDto = makeCommentDto("Thanks a lot", booker.getName());
+
+        CommentDto commentFromRepository = service.addComment(booker.getId(), item.getId(), commentDto);
+
+        assertThat(commentFromRepository.getId(), notNullValue());
+        assertThat(commentDto.getText(), is(commentFromRepository.getText()));
+        assertThat(commentDto.getAuthorName(), is(commentFromRepository.getAuthorName()));
+    }
+
+    private CommentDto makeCommentDto(String text, String authorName) {
+        CommentDto.CommentDtoBuilder builder = CommentDto.builder();
+
+        builder.text(text);
+        builder.authorName(authorName);
+
+        return builder.build();
+    }
+
     private Booking makeBooking(Item item, User booker) {
         Booking.BookingBuilder builder = Booking.builder();
 
@@ -228,17 +326,6 @@ public class ItemServiceImplTest {
         builder.description(description);
         builder.available(available);
         builder.owner(owner);
-
-        return builder.build();
-    }
-
-    private ItemDto makeItemDto(Integer requestId, String name, String description, Boolean available) {
-        ItemDto.ItemDtoBuilder builder = ItemDto.builder();
-
-        builder.requestId(requestId);
-        builder.name(name);
-        builder.description(description);
-        builder.available(available);
 
         return builder.build();
     }

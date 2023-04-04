@@ -91,7 +91,8 @@ public class ItemServiceImpl implements ItemService {
     public List<ItemInfo> findAllItemsByUser(Integer userId, Integer from, Integer size) {
         itemValidation.checkPaginationInput(from, size);
         List<ItemInfo> itemInfoList = new ArrayList<>();
-        List<Item> items = itemRepository.findAllByOwner(userId).stream().skip(from).limit(size).collect(Collectors.toList());
+        List<Item> items = itemRepository
+                .findAllByOwner(userId).stream().skip(from).limit(size).collect(Collectors.toList());
         for (Item item : items) {
             List<CommentInfo> comments = commentsRepository.findAllByItemId(item.getId());
             LastBooking lastBooking = bookingRepository.findLastBooking(item.getId());

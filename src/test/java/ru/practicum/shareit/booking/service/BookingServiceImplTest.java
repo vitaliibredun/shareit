@@ -9,6 +9,7 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.constants.BookingStatus;
+import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingInfo;
 import ru.practicum.shareit.booking.mapper.BookingMapper;
 import ru.practicum.shareit.booking.model.Booking;
@@ -67,6 +68,19 @@ public class BookingServiceImplTest {
     @AfterEach
     void cleanUp() {
         resetIdColumns();
+    }
+
+    @Test
+    void createBookingTest() {
+        BookingDto bookingDto = makeBookingDto(item.getId(),
+                LocalDateTime.now(), LocalDateTime.now().plusDays(1), booker.getId());
+
+        BookingInfo bookingFromRepository = service.createBooking(booker.getId(), bookingDto);
+
+        assertThat(bookingFromRepository.getId(), notNullValue());
+        assertThat(bookingDto.getStart(), is(bookingFromRepository.getStart()));
+        assertThat(bookingDto.getItemId(), is(bookingFromRepository.getItem().getId()));
+        assertThat(bookingDto.getBooker(), is(bookingFromRepository.getBooker().getId()));
     }
 
     @Test
@@ -407,6 +421,18 @@ public class BookingServiceImplTest {
                 () -> service.findAllBookingsOwner(userDto.getId(), "MINE", 0, 10));
 
         assertThat("Unknown state: UNSUPPORTED_STATUS", is(exception.getMessage()));
+    }
+
+    private BookingDto makeBookingDto(Integer itemId, LocalDateTime start, LocalDateTime end,Integer booker) {
+        BookingDto.BookingDtoBuilder builder = BookingDto.builder();
+
+        builder.itemId(itemId);
+        builder.start(start);
+        builder.end(end);
+        builder.booker(booker);
+        builder.status(BookingStatus.WAITING);
+
+        return builder.build();
     }
 
     private Booking makeBooking(Item item, User booker, LocalDateTime start, LocalDateTime end) {

@@ -50,11 +50,13 @@ public class BookingControllerTest {
 
     @Test
     void createBooking() throws Exception {
+        Integer userId = 1;
+
         when(service.createBooking(anyInt(), any(BookingDto.class)))
                 .thenReturn(bookingInfo1);
 
         mvc.perform(post("/bookings")
-                        .header("X-Sharer-User-Id", 1)
+                        .header("X-Sharer-User-Id", userId)
                         .content(mapper.writeValueAsString(bookingDto))
                         .characterEncoding(StandardCharsets.UTF_8)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -67,13 +69,15 @@ public class BookingControllerTest {
 
     @Test
     void approvingBooking() throws Exception {
+        Integer bookingId = 1;
+        Integer userId = 1;
         bookingInfo1.setStatus(BookingStatus.APPROVED);
 
         when(service.approvingBooking(anyInt(), anyInt(), anyBoolean()))
                 .thenReturn(bookingInfo1);
 
-        mvc.perform(patch("/bookings/1")
-                        .header("X-Sharer-User-Id", 1)
+        mvc.perform(patch("/bookings/{bookingId}", bookingId)
+                        .header("X-Sharer-User-Id", userId)
                         .param("approved", "true")
                         .characterEncoding(StandardCharsets.UTF_8)
                         .accept(MediaType.APPLICATION_JSON))
@@ -85,11 +89,14 @@ public class BookingControllerTest {
 
     @Test
     void findBooking() throws Exception {
+        Integer bookingId = 1;
+        Integer userId = 1;
+
         when(service.findBooking(anyInt(), anyInt()))
                 .thenReturn(bookingInfo1);
 
-        mvc.perform(get("/bookings/1")
-                        .header("X-Sharer-User-Id", 1)
+        mvc.perform(get("/bookings/{bookingId}", bookingId)
+                        .header("X-Sharer-User-Id", userId)
                         .characterEncoding(StandardCharsets.UTF_8)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -100,13 +107,14 @@ public class BookingControllerTest {
 
     @Test
     void findAllBookingsCustomer() throws Exception {
+        Integer userId = 1;
         Integer expectedSize = 3;
 
         when(service.findAllBookingsCustomer(anyInt(), anyString(), anyInt(), anyInt()))
                 .thenReturn(List.of(bookingInfo1, bookingInfo2, bookingInfo3));
 
         mvc.perform(get("/bookings")
-                        .header("X-Sharer-User-Id", 1)
+                        .header("X-Sharer-User-Id", userId)
                         .characterEncoding(StandardCharsets.UTF_8)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -124,13 +132,14 @@ public class BookingControllerTest {
 
     @Test
     void findAllBookingsOwner() throws Exception {
+        Integer userId = 1;
         Integer expectedSize = 3;
 
         when(service.findAllBookingsOwner(anyInt(), anyString(), anyInt(), anyInt()))
                 .thenReturn(List.of(bookingInfo1, bookingInfo2, bookingInfo3));
 
         mvc.perform(get("/bookings/owner")
-                        .header("X-Sharer-User-Id", 1)
+                        .header("X-Sharer-User-Id", userId)
                         .characterEncoding(StandardCharsets.UTF_8)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())

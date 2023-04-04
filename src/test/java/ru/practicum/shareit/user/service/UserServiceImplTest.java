@@ -15,6 +15,8 @@ import ru.practicum.shareit.user.repository.UserRepository;
 
 import javax.persistence.EntityManager;
 
+import java.util.List;
+
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
@@ -42,6 +44,17 @@ public class UserServiceImplTest {
     }
 
     @Test
+    void createUserTest() {
+        UserDto userDto = makeUserDto("Timmy", "yahho@mail.com");
+
+        UserDto userFromRepository = service.createUser(userDto);
+
+        assertThat(userFromRepository.getId(), notNullValue());
+        assertThat(userDto.getName(), is(userFromRepository.getName()));
+        assertThat(userDto.getEmail(), is(userFromRepository.getEmail()));
+    }
+
+    @Test
     void findUserTest() {
         assertThat(repository.findAll(), notNullValue());
 
@@ -50,6 +63,17 @@ public class UserServiceImplTest {
         assertThat(userDto.getId(), is(userFromRepository.getId()));
         assertThat(userDto.getName(), is(userFromRepository.getName()));
         assertThat(userDto.getEmail(), is(userFromRepository.getEmail()));
+    }
+
+    @Test
+    void findAllUsersTest() {
+        Integer expectedSize = 1;
+
+        List<UserDto> allUsers = service.findAllUsers();
+
+        assertThat(allUsers.size(), is(expectedSize));
+        assertThat(userDto.getName(), is(allUsers.get(0).getName()));
+        assertThat(userDto.getEmail(), is(allUsers.get(0).getEmail()));
     }
 
     @Test
@@ -95,6 +119,15 @@ public class UserServiceImplTest {
         service.deleteUser(userDto.getId());
 
         assertThat(repository.findAll(), empty());
+    }
+
+    private UserDto makeUserDto(String name, String email) {
+        UserDto.UserDtoBuilder builder = UserDto.builder();
+
+        builder.name(name);
+        builder.email(email);
+
+        return builder.build();
     }
 
     private User makeUser(String name, String email) {
