@@ -9,7 +9,6 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.exceptions.ItemNotFoundException;
-import ru.practicum.shareit.exceptions.ValidationException;
 import ru.practicum.shareit.exceptions.WrongOwnerOfItemException;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
@@ -72,26 +71,6 @@ public class ItemValidationImplTest {
                 ItemNotFoundException.class, () -> validation.checkIfItemExist(item.getId()));
 
         assertThat("The item with the id doesn't exists", is(exception.getMessage()));
-    }
-
-    @Test
-    void verifyCheckPaginationInputFromValueException() {
-        assertThat(repository.findAll(), notNullValue());
-
-        final ValidationException exception = assertThrows(
-                ValidationException.class, () -> validation.checkPaginationInput(-1, 1));
-
-        assertThat("The parameter of from must  not be less than zero", is(exception.getMessage()));
-    }
-
-    @Test
-    void verifyCheckPaginationInputSizeValueException() {
-        assertThat(repository.findAll(), notNullValue());
-
-        final ValidationException exception = assertThrows(
-                ValidationException.class, () -> validation.checkPaginationInput(1, 0));
-
-        assertThat("The parameter of size must not be less than one", is(exception.getMessage()));
     }
 
     private Item makeItem(String name, String description, Boolean available, User owner) {

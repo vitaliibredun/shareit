@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.exceptions.RequestNotFoundException;
 import ru.practicum.shareit.item.model.Item;
@@ -109,7 +110,7 @@ public class RequestServiceImplTest {
         User user = userRepository.save(userToSave);
         UserDto userDto = userMapper.toDto(user);
 
-        List<ItemRequestInfo> allRequests = service.findAllItemRequests(userDto.getId(), 0, 10);
+        List<ItemRequestInfo> allRequests = service.findAllItemRequests(userDto.getId(), PageRequest.of(0,10));
 
         assertThat(allRequests.size(), is(expectedSize));
         assertThat(requestDto.getId(), is(allRequests.get(0).getId()));
@@ -130,7 +131,7 @@ public class RequestServiceImplTest {
         Item item = makeItem("A hammer", "For something", true, user, request);
         itemRepository.save(item);
 
-        List<ItemRequestInfo> allRequests = service.findAllItemRequests(userDto.getId(), 0, 10);
+        List<ItemRequestInfo> allRequests = service.findAllItemRequests(userDto.getId(), PageRequest.of(0,10));
 
         assertThat(allRequests.size(), is(expectedSize));
         assertThat(requestDto.getId(), is(allRequests.get(0).getId()));

@@ -1,6 +1,7 @@
 package ru.practicum.shareit.item.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.booking.dto.LastBooking;
@@ -88,11 +89,9 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<ItemInfo> findAllItemsByUser(Integer userId, Integer from, Integer size) {
-        itemValidation.checkPaginationInput(from, size);
+    public List<ItemInfo> findAllItemsByUser(Integer userId, Pageable pageable) {
         List<ItemInfo> itemInfoList = new ArrayList<>();
-        List<Item> items = itemRepository
-                .findAllByOwner(userId).stream().skip(from).limit(size).collect(Collectors.toList());
+        List<Item> items = itemRepository.findAllByOwner(userId, pageable);
         for (Item item : items) {
             List<CommentInfo> comments = commentsRepository.findAllByItemId(item.getId());
             LastBooking lastBooking = bookingRepository.findLastBooking(item.getId());
@@ -103,15 +102,12 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<ItemDto> searchItemForRent(String text, Integer from, Integer size) {
-        itemValidation.checkPaginationInput(from, size);
+    public List<ItemDto> searchItemForRent(String text, Pageable pageable) {
         if (text.isEmpty()) {
             return new ArrayList<>();
         }
-        return itemRepository.searchItemByInput(text)
+        return itemRepository.searchItemByInput(text, pageable)
                 .stream()
-                .skip(from)
-                .limit(size)
                 .map(itemMapper::toDto)
                 .collect(Collectors.toList());
     }

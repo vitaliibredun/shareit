@@ -1,11 +1,11 @@
 package ru.practicum.shareit.request.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exceptions.RequestNotFoundException;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.repository.ItemRepository;
-import ru.practicum.shareit.item.validation.ItemValidation;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.request.dto.ItemRequestInfo;
 import ru.practicum.shareit.request.mapper.RequestMapper;
@@ -17,7 +17,6 @@ import ru.practicum.shareit.user.validation.UserValidation;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service("requestServiceImpl")
 @RequiredArgsConstructor
@@ -26,7 +25,6 @@ public class RequestServiceImpl implements RequestService {
     private final ItemRepository itemRepository;
     private final RequestMapper mapper;
     private final UserValidation userValidation;
-    private final ItemValidation itemValidation;
 
     @Override
     public ItemRequestDto createItemRequest(Integer userId, ItemRequestDto itemRequestDto) {
@@ -51,11 +49,9 @@ public class RequestServiceImpl implements RequestService {
     }
 
     @Override
-    public List<ItemRequestInfo> findAllItemRequests(Integer userId, Integer from, Integer size) {
-        itemValidation.checkPaginationInput(from, size);
+    public List<ItemRequestInfo> findAllItemRequests(Integer userId, Pageable pageable) {
         List<ItemRequestInfo> requestList = new ArrayList<>();
-        List<ItemRequest> itemRequests = requestRepository
-                .findAllExceptRequestor(userId).stream().skip(from).limit(size).collect(Collectors.toList());
+        List<ItemRequest> itemRequests = requestRepository.findAllExceptRequestor(userId, pageable);
         for (ItemRequest request : itemRequests) {
             List<ItemDto> items = itemRepository.findItemsByRequest(request.getId());
             ItemRequestInfo itemRequestInfo = mapper.toDto(request, items);

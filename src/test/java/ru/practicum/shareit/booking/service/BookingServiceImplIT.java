@@ -6,6 +6,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.constants.BookingStatus;
 import ru.practicum.shareit.booking.dto.BookingDto;
@@ -88,7 +89,7 @@ public class BookingServiceImplIT {
         Integer userId = user1.getId();
         Integer expectedSize = 2;
 
-        assertThat(service.findAllBookingsCustomer(user1.getId(), "FUTURE", 0, 10), empty());
+        assertThat(service.findAllBookingsCustomer(user1.getId(), "FUTURE", PageRequest.of(0, 10)), empty());
 
         BookingDto bookingDto1 = makeBookingDto(item2.getId(),
                 LocalDateTime.now().plusHours(1),
@@ -121,7 +122,7 @@ public class BookingServiceImplIT {
         Integer userId = user1.getId();
         Integer expectedSize = 1;
 
-        assertThat(service.findAllBookingsOwner(user1.getId(), "FUTURE", 0, 10), empty());
+        assertThat(service.findAllBookingsOwner(user1.getId(), "FUTURE", PageRequest.of(0, 10)), empty());
 
         BookingDto bookingDto1 = makeBookingDto(item2.getId(),
                 LocalDateTime.now().plusHours(1),

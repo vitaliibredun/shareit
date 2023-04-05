@@ -13,6 +13,7 @@ import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.booking.validation.BookingValidation;
 import ru.practicum.shareit.user.validation.UserValidation;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -58,50 +59,37 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<BookingInfo> findAllBookingsCustomer(Integer userId, String state, Integer from, Integer size) {
-        bookingValidation.checkPaginationInput(from, size);
+    public List<BookingInfo> findAllBookingsCustomer(Integer userId, String state, Pageable pageable) {
         userValidation.checkUserExist(userId);
         switch (state) {
             case "CURRENT":
-                return repository.findAllCurrentByBooker(userId)
+                return repository.findAllCurrentByBooker(userId, pageable)
                         .stream()
-                        .skip(from)
-                        .limit(size)
                         .map(mapper::toDto)
                         .collect(Collectors.toList());
             case "PAST":
-                return repository.findAllPastByBooker(userId)
+                return repository.findAllPastByBooker(userId, pageable)
                         .stream()
-                        .skip(from)
-                        .limit(size)
                         .map(mapper::toDto)
                         .collect(Collectors.toList());
             case "FUTURE":
-                return repository.findAllFutureByBooker(userId)
+                return repository.findAllFutureByBooker(userId, pageable)
                         .stream()
-                        .skip(from)
-                        .limit(size)
                         .map(mapper::toDto)
                         .collect(Collectors.toList());
             case "WAITING":
-                return repository.findAllWaitingStatusByBooker(userId)
+                return repository.findAllWaitingStatusByBooker(userId, pageable)
                         .stream()
-                        .skip(from)
-                        .limit(size)
                         .map(mapper::toDto)
                         .collect(Collectors.toList());
             case "REJECTED":
-                return repository.findAllRejectedStatusByBooker(userId)
+                return repository.findAllRejectedStatusByBooker(userId, pageable)
                         .stream()
-                        .skip(from)
-                        .limit(size)
                         .map(mapper::toDto)
                         .collect(Collectors.toList());
             case "ALL":
-                return repository.findAllByBooker(userId)
+                return repository.findAllByBooker(userId, pageable)
                         .stream()
-                        .skip(from)
-                        .limit(size)
                         .map(mapper::toDto)
                         .collect(Collectors.toList());
         }
@@ -109,50 +97,37 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<BookingInfo> findAllBookingsOwner(Integer userId, String state, Integer from, Integer size) {
-        bookingValidation.checkPaginationInput(from, size);
+    public List<BookingInfo> findAllBookingsOwner(Integer userId, String state, Pageable pageable) {
         userValidation.checkUserExist(userId);
         switch (state) {
             case "CURRENT":
-                return repository.findAllCurrentByOwner(userId)
+                return repository.findAllCurrentByOwner(userId, pageable)
                         .stream()
-                        .skip(from)
-                        .limit(size)
                         .map(mapper::toDto)
                         .collect(Collectors.toList());
             case "PAST":
-                return repository.findAllPastByOwner(userId)
+                return repository.findAllPastByOwner(userId, pageable)
                         .stream()
-                        .skip(from)
-                        .limit(size)
                         .map(mapper::toDto)
                         .collect(Collectors.toList());
             case "FUTURE":
-                return repository.findAllFutureByOwner(userId)
+                return repository.findAllFutureByOwner(userId, pageable)
                         .stream()
-                        .skip(from)
-                        .limit(size)
                         .map(mapper::toDto)
                         .collect(Collectors.toList());
             case "WAITING":
-                return repository.findAllWaitingStatusByOwner(userId)
+                return repository.findAllWaitingStatusByOwner(userId, pageable)
                         .stream()
-                        .skip(from)
-                        .limit(size)
                         .map(mapper::toDto)
                         .collect(Collectors.toList());
             case "REJECTED":
-                return repository.findAllRejectedStatusByOwner(userId)
+                return repository.findAllRejectedStatusByOwner(userId, pageable)
                         .stream()
-                        .skip(from)
-                        .limit(size)
                         .map(mapper::toDto)
                         .collect(Collectors.toList());
             case "ALL":
-                return repository.findAllByOwner(userId)
+                return repository.findAllByOwner(userId, pageable)
                         .stream()
-                        .skip(from)
-                        .limit(size)
                         .map(mapper::toDto)
                         .collect(Collectors.toList());
         }

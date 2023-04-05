@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.constants.BookingStatus;
 import ru.practicum.shareit.booking.model.Booking;
@@ -187,7 +188,7 @@ public class ItemServiceImplTest {
     void findAllItemsByUserTest() {
         Integer expectedSize = 1;
 
-        List<ItemInfo> items = service.findAllItemsByUser(userDto.getId(), 0, 10);
+        List<ItemInfo> items = service.findAllItemsByUser(userDto.getId(), PageRequest.of(0,10));
 
         assertThat(items.size(), is(expectedSize));
         assertThat(itemDto.getId(), is(items.get(0).getId()));
@@ -205,7 +206,7 @@ public class ItemServiceImplTest {
         Booking booking = makeBooking(item, booker);
         bookingRepository.save(booking);
 
-        List<ItemInfo> items = service.findAllItemsByUser(userDto.getId(), 0, 10);
+        List<ItemInfo> items = service.findAllItemsByUser(userDto.getId(), PageRequest.of(0,10));
 
         assertThat(items.size(), is(expectedSize));
         assertThat(itemDto.getId(), is(items.get(0).getId()));
@@ -229,7 +230,7 @@ public class ItemServiceImplTest {
         CommentDto commentDto = makeCommentDto("Thanks a lot", booker.getName());
         service.addComment(booker.getId(), item.getId(), commentDto);
 
-        List<ItemInfo> items = service.findAllItemsByUser(userDto.getId(), 0, 10);
+        List<ItemInfo> items = service.findAllItemsByUser(userDto.getId(), PageRequest.of(0,10));
 
         assertThat(items.size(), is(expectedSize));
         assertThat(itemDto.getId(), is(items.get(0).getId()));
@@ -263,7 +264,7 @@ public class ItemServiceImplTest {
     void searchItemForRentTest() {
         assertThat(repository.findAll(), notNullValue());
 
-        List<ItemDto> itemDtoList = service.searchItemForRent("gReaT", 0, 10);
+        List<ItemDto> itemDtoList = service.searchItemForRent("gReaT", PageRequest.of(0,10));
 
         assertThat(itemDto.getId(), is(itemDtoList.get(0).getId()));
         assertThat(itemDto.getName(), is(itemDtoList.get(0).getName()));
@@ -275,7 +276,7 @@ public class ItemServiceImplTest {
     void searchItemForRentWithEmptyInputTest() {
         assertThat(repository.findAll(), notNullValue());
 
-        List<ItemDto> itemDtoList = service.searchItemForRent("", 0, 10);
+        List<ItemDto> itemDtoList = service.searchItemForRent("", PageRequest.of(0,10));
 
         assertThat(itemDtoList, empty());
     }

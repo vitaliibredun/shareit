@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.practicum.shareit.booking.constants.BookingStatus;
@@ -110,7 +111,7 @@ public class BookingControllerTest {
         Integer userId = 1;
         Integer expectedSize = 3;
 
-        when(service.findAllBookingsCustomer(anyInt(), anyString(), anyInt(), anyInt()))
+        when(service.findAllBookingsCustomer(anyInt(), anyString(), any(Pageable.class)))
                 .thenReturn(List.of(bookingInfo1, bookingInfo2, bookingInfo3));
 
         mvc.perform(get("/bookings")
@@ -135,7 +136,7 @@ public class BookingControllerTest {
         Integer userId = 1;
         Integer expectedSize = 3;
 
-        when(service.findAllBookingsOwner(anyInt(), anyString(), anyInt(), anyInt()))
+        when(service.findAllBookingsOwner(anyInt(), anyString(), any(Pageable.class)))
                 .thenReturn(List.of(bookingInfo1, bookingInfo2, bookingInfo3));
 
         mvc.perform(get("/bookings/owner")

@@ -6,9 +6,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import ru.practicum.shareit.request.controller.ItemRequestController;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.request.dto.ItemRequestInfo;
 import ru.practicum.shareit.request.service.RequestService;
@@ -88,7 +88,7 @@ public class ItemRequestControllerTest {
     void findAllItemRequests() throws Exception {
         Integer expectedSize = 3;
 
-        when(service.findAllItemRequests(anyInt(), anyInt(), anyInt()))
+        when(service.findAllItemRequests(anyInt(), any(Pageable.class)))
                 .thenReturn(List.of(requestInfo1, requestInfo2, requestInfo3));
 
         mvc.perform(get("/requests/all")

@@ -1,5 +1,6 @@
 package ru.practicum.shareit.booking.repository;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import ru.practicum.shareit.booking.dto.BookingFromRepository;
@@ -16,9 +17,8 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
             "(b.id, b.item.id, b.item.name, b.start, b.end, b.booker.id, b.booker.name, b.status) " +
             "from Booking b " +
             "where b.booker.id = ?1  " +
-            "group by b.id " +
-            "order by b.start desc")
-    List<BookingFromRepository> findAllByBooker(Integer userId);
+            "group by b.id")
+    List<BookingFromRepository> findAllByBooker(Integer userId, Pageable pageable);
 
     @Query("select new ru.practicum.shareit.booking.dto.BookingFromRepository" +
             "(b.id, b.item.id, b.item.name, b.start, b.end, b.booker.id, b.booker.name, b.status) " +
@@ -26,53 +26,47 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
             "where b.booker.id = ?1 " +
             "and b.end > current_timestamp " +
             "and b.start < current_timestamp " +
-            "group by b.id " +
-            "order by b.start desc")
-    List<BookingFromRepository> findAllCurrentByBooker(Integer userId);
+            "group by b.id")
+    List<BookingFromRepository> findAllCurrentByBooker(Integer userId, Pageable pageable);
 
     @Query("select new ru.practicum.shareit.booking.dto.BookingFromRepository" +
             "(b.id, b.item.id, b.item.name, b.start, b.end, b.booker.id, b.booker.name, b.status) " +
             "from Booking b " +
             "where b.booker.id = ?1 " +
             "and b.end < current_timestamp " +
-            "group by b.id " +
-            "order by b.start desc")
-    List<BookingFromRepository> findAllPastByBooker(Integer userId);
+            "group by b.id")
+    List<BookingFromRepository> findAllPastByBooker(Integer userId, Pageable pageable);
 
     @Query("select new ru.practicum.shareit.booking.dto.BookingFromRepository" +
             "(b.id, b.item.id, b.item.name, b.start, b.end, b.booker.id, b.booker.name, b.status) " +
             "from Booking b " +
             "where b.booker.id = ?1 " +
             "and b.start > current_timestamp " +
-            "group by b.id " +
-            "order by b.start desc")
-    List<BookingFromRepository> findAllFutureByBooker(Integer userId);
+            "group by b.id")
+    List<BookingFromRepository> findAllFutureByBooker(Integer userId, Pageable pageable);
 
     @Query("select new ru.practicum.shareit.booking.dto.BookingFromRepository" +
             "(b.id, b.item.id, b.item.name, b.start, b.end, b.booker.id, b.booker.name, b.status) " +
             "from Booking b " +
             "where b.booker.id = ?1 " +
             "and b.status = ru.practicum.shareit.booking.constants.BookingStatus.WAITING " +
-            "group by b.id " +
-            "order by b.start desc")
-    List<BookingFromRepository> findAllWaitingStatusByBooker(Integer userId);
+            "group by b.id")
+    List<BookingFromRepository> findAllWaitingStatusByBooker(Integer userId, Pageable pageable);
 
     @Query("select new ru.practicum.shareit.booking.dto.BookingFromRepository" +
             "(b.id, b.item.id, b.item.name, b.start, b.end, b.booker.id, b.booker.name, b.status) " +
             "from Booking b " +
             "where b.booker.id = ?1 " +
             "and b.status = ru.practicum.shareit.booking.constants.BookingStatus.REJECTED " +
-            "group by b.id " +
-            "order by b.start desc")
-    List<BookingFromRepository> findAllRejectedStatusByBooker(Integer userId);
+            "group by b.id")
+    List<BookingFromRepository> findAllRejectedStatusByBooker(Integer userId, Pageable pageable);
 
     @Query("select new ru.practicum.shareit.booking.dto.BookingFromRepository" +
             "(b.id, b.item.id, b.item.name, b.start, b.end, b.booker.id, b.booker.name, b.status) " +
             "from Booking b " +
             "where b.item.owner.id = ?1 " +
-            "group by b.id " +
-            "order by b.start desc")
-    List<BookingFromRepository> findAllByOwner(Integer userId);
+            "group by b.id")
+    List<BookingFromRepository> findAllByOwner(Integer userId, Pageable pageable);
 
     @Query("select new ru.practicum.shareit.booking.dto.BookingFromRepository" +
             "(b.id, b.item.id, b.item.name, b.start, b.end, b.booker.id, b.booker.name, b.status) " +
@@ -80,45 +74,40 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
             "where b.item.owner.id = ?1 " +
             "and b.end > current_timestamp " +
             "and b.start < current_timestamp " +
-            "group by b.id " +
-            "order by b.start desc")
-    List<BookingFromRepository> findAllCurrentByOwner(Integer userId);
+            "group by b.id")
+    List<BookingFromRepository> findAllCurrentByOwner(Integer userId, Pageable pageable);
 
     @Query("select new ru.practicum.shareit.booking.dto.BookingFromRepository" +
             "(b.id, b.item.id, b.item.name, b.start, b.end, b.booker.id, b.booker.name, b.status) " +
             "from Booking b " +
             "where b.item.owner.id = ?1 " +
             "and b.end < current_timestamp " +
-            "group by b.id " +
-            "order by b.start desc")
-    List<BookingFromRepository> findAllPastByOwner(Integer userId);
+            "group by b.id")
+    List<BookingFromRepository> findAllPastByOwner(Integer userId, Pageable pageable);
 
     @Query("select new ru.practicum.shareit.booking.dto.BookingFromRepository" +
             "(b.id, b.item.id, b.item.name, b.start, b.end, b.booker.id, b.booker.name, b.status) " +
             "from Booking b " +
             "where b.item.owner.id = ?1 " +
             "and b.start > current_timestamp " +
-            "group by b.id " +
-            "order by b.start desc")
-    List<BookingFromRepository> findAllFutureByOwner(Integer userId);
+            "group by b.id")
+    List<BookingFromRepository> findAllFutureByOwner(Integer userId, Pageable pageable);
 
     @Query("select new ru.practicum.shareit.booking.dto.BookingFromRepository" +
             "(b.id, b.item.id, b.item.name, b.start, b.end, b.booker.id, b.booker.name, b.status) " +
             "from Booking b " +
             "where b.item.owner.id = ?1 " +
             "and b.status = ru.practicum.shareit.booking.constants.BookingStatus.WAITING " +
-            "group by b.id " +
-            "order by b.start desc")
-    List<BookingFromRepository> findAllWaitingStatusByOwner(Integer userId);
+            "group by b.id")
+    List<BookingFromRepository> findAllWaitingStatusByOwner(Integer userId, Pageable pageable);
 
     @Query("select new ru.practicum.shareit.booking.dto.BookingFromRepository" +
             "(b.id, b.item.id, b.item.name, b.start, b.end, b.booker.id, b.booker.name, b.status) " +
             "from Booking b " +
             "where b.item.owner.id = ?1 " +
             "and b.status = ru.practicum.shareit.booking.constants.BookingStatus.REJECTED " +
-            "group by b.id " +
-            "order by b.start desc")
-    List<BookingFromRepository> findAllRejectedStatusByOwner(Integer userId);
+            "group by b.id")
+    List<BookingFromRepository> findAllRejectedStatusByOwner(Integer userId, Pageable pageable);
 
     @Query("select new ru.practicum.shareit.booking.dto.LastBooking" +
             "(b1.id, b1.booker.id, b1.start) " +

@@ -6,6 +6,4 @@ public interface ItemValidation {
     Item checkOwnerOfItem(Integer userId, Integer itemId);
 
     Item checkIfItemExist(Integer itemId);
-
-    void checkPaginationInput(Integer from, Integer size);
 }

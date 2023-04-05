@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.practicum.shareit.comments.dto.CommentDto;
@@ -105,7 +106,7 @@ public class ItemControllerTest {
     void findAllItemsByUser() throws Exception {
         Integer expectedSize = 3;
 
-        when(service.findAllItemsByUser(anyInt(), anyInt(), anyInt()))
+        when(service.findAllItemsByUser(anyInt(), any(Pageable.class)))
                 .thenReturn(List.of(itemInfo1, itemInfo2, itemInfo3));
 
         mvc.perform(get("/items")
@@ -129,7 +130,7 @@ public class ItemControllerTest {
     void searchItemForRent() throws Exception {
         Integer expectedSize = 1;
 
-        when(service.searchItemForRent(anyString(), anyInt(), anyInt()))
+        when(service.searchItemForRent(anyString(), any(Pageable.class)))
                 .thenReturn(List.of(itemDto1));
 
         mvc.perform(get("/items/search")

@@ -1,10 +1,13 @@
 package ru.practicum.shareit.booking.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingInfo;
 import ru.practicum.shareit.booking.service.BookingService;
+import ru.practicum.shareit.exceptions.ValidationException;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -39,7 +42,10 @@ public class BookingController {
                                                      @RequestParam(value = "state", defaultValue = "ALL", required = false) String state,
                                                      @RequestParam(value = "from", required = false, defaultValue = "0") Integer from,
                                                      @RequestParam(value = "size", required = false, defaultValue = "10") Integer size) {
-        return service.findAllBookingsCustomer(userId, state, from, size);
+        if (from < 0) {
+            throw new ValidationException("The parameter of page must  not be less than zero");
+        }
+        return service.findAllBookingsCustomer(userId, state, PageRequest.of(from / size, size, Sort.by("start").descending()));
     }
 
     @GetMapping("/owner")
@@ -47,6 +53,9 @@ public class BookingController {
                                                   @RequestParam(value = "state", defaultValue = "ALL", required = false) String state,
                                                   @RequestParam(value = "from", required = false, defaultValue = "0") Integer from,
                                                   @RequestParam(value = "size", required = false, defaultValue = "10") Integer size) {
-        return service.findAllBookingsOwner(userId, state, from, size);
+        if (from < 0) {
+            throw new ValidationException("The parameter of page must  not be less than zero");
+        }
+        return service.findAllBookingsOwner(userId, state, PageRequest.of(from / size, size, Sort.by("start").descending()));
     }
 }

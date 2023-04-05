@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.constants.BookingStatus;
 import ru.practicum.shareit.booking.dto.BookingDto;
@@ -133,7 +134,7 @@ public class BookingServiceImplTest {
         assertThat(repository.findAll().size(), is(currentSize));
 
         List<BookingInfo> bookingsCustomer = service
-                .findAllBookingsCustomer(booker.getId(), "CURRENT", 0, 10);
+                .findAllBookingsCustomer(booker.getId(), "CURRENT", PageRequest.of(0, 10));
 
         assertThat(bookingsCustomer.size(), is(expectedSizeToCustomer));
         assertThat(bookingInfo1.getId(), is(bookingsCustomer.get(0).getId()));
@@ -154,7 +155,7 @@ public class BookingServiceImplTest {
         bookingInfo1 = mapper.toDto(booking);
 
         List<BookingInfo> bookingsCustomer = service
-                .findAllBookingsCustomer(booker.getId(), "PAST", 0, 10);
+                .findAllBookingsCustomer(booker.getId(), "PAST", PageRequest.of(0, 10));
 
         assertThat(repository.findAll().size(), is(allBookingsSize));
         assertThat(bookingsCustomer.size(), is(expectedSizeToCustomer));
@@ -177,7 +178,7 @@ public class BookingServiceImplTest {
         bookingInfo1 = mapper.toDto(booking);
 
         List<BookingInfo> bookingsCustomer = service
-                .findAllBookingsCustomer(booker.getId(), "FUTURE", 0, 10);
+                .findAllBookingsCustomer(booker.getId(), "FUTURE", PageRequest.of(0, 10));
 
         assertThat(repository.findAll().size(), is(allBookingsSize));
         assertThat(bookingsCustomer.size(), is(expectedSizeToCustomer));
@@ -200,16 +201,16 @@ public class BookingServiceImplTest {
         BookingInfo bookingInfo2 = mapper.toDto(booking);
 
         List<BookingInfo> bookingsCustomer = service
-                .findAllBookingsCustomer(booker.getId(), "WAITING", 0, 10);
+                .findAllBookingsCustomer(booker.getId(), "WAITING", PageRequest.of(0, 10));
 
         assertThat(repository.findAll().size(), is(allBookingsSize));
         assertThat(bookingsCustomer.size(), is(expectedSizeToCustomer));
-        assertThat(bookingInfo2.getId(), is(bookingsCustomer.get(0).getId()));
-        assertThat(bookingInfo2.getItem().getId(), is(bookingsCustomer.get(0).getItem().getId()));
-        assertThat(bookingInfo2.getBooker().getId(), is(bookingsCustomer.get(0).getBooker().getId()));
-        assertThat(bookingInfo1.getId(), is(bookingsCustomer.get(1).getId()));
-        assertThat(bookingInfo1.getItem().getId(), is(bookingsCustomer.get(1).getItem().getId()));
-        assertThat(bookingInfo1.getBooker().getId(), is(bookingsCustomer.get(1).getBooker().getId()));
+        assertThat(bookingInfo2.getId(), is(bookingsCustomer.get(1).getId()));
+        assertThat(bookingInfo2.getItem().getId(), is(bookingsCustomer.get(1).getItem().getId()));
+        assertThat(bookingInfo2.getBooker().getId(), is(bookingsCustomer.get(1).getBooker().getId()));
+        assertThat(bookingInfo1.getId(), is(bookingsCustomer.get(0).getId()));
+        assertThat(bookingInfo1.getItem().getId(), is(bookingsCustomer.get(0).getItem().getId()));
+        assertThat(bookingInfo1.getBooker().getId(), is(bookingsCustomer.get(0).getBooker().getId()));
     }
 
     @Test
@@ -226,7 +227,7 @@ public class BookingServiceImplTest {
         BookingInfo bookingFromRepository = service.approvingBooking(userDto.getId(), bookingInfo1.getId(), false);
 
         List<BookingInfo> bookingsCustomer = service
-                .findAllBookingsCustomer(booker.getId(), "REJECTED", 0, 10);
+                .findAllBookingsCustomer(booker.getId(), "REJECTED", PageRequest.of(0, 10));
 
         assertThat(repository.findAll().size(), is(allBookingsSize));
         assertThat(bookingsCustomer.size(), is(expectedSizeToCustomer));
@@ -251,16 +252,16 @@ public class BookingServiceImplTest {
         BookingInfo bookingInfo2 = mapper.toDto(booking);
 
         List<BookingInfo> bookingsCustomer = service
-                .findAllBookingsCustomer(booker.getId(), "ALL", 0, 10);
+                .findAllBookingsCustomer(booker.getId(), "ALL", PageRequest.of(0, 10));
 
         assertThat(repository.findAll().size(), is(allBookingsSize));
         assertThat(bookingsCustomer.size(), is(expectedSizeToCustomer));
-        assertThat(bookingInfo2.getId(), is(bookingsCustomer.get(0).getId()));
-        assertThat(bookingInfo2.getItem().getId(), is(bookingsCustomer.get(0).getItem().getId()));
-        assertThat(bookingInfo2.getBooker().getId(), is(bookingsCustomer.get(0).getBooker().getId()));
-        assertThat(bookingInfo1.getId(), is(bookingsCustomer.get(1).getId()));
-        assertThat(bookingInfo1.getItem().getId(), is(bookingsCustomer.get(1).getItem().getId()));
-        assertThat(bookingInfo1.getBooker().getId(), is(bookingsCustomer.get(1).getBooker().getId()));
+        assertThat(bookingInfo2.getId(), is(bookingsCustomer.get(1).getId()));
+        assertThat(bookingInfo2.getItem().getId(), is(bookingsCustomer.get(1).getItem().getId()));
+        assertThat(bookingInfo2.getBooker().getId(), is(bookingsCustomer.get(1).getBooker().getId()));
+        assertThat(bookingInfo1.getId(), is(bookingsCustomer.get(0).getId()));
+        assertThat(bookingInfo1.getItem().getId(), is(bookingsCustomer.get(0).getItem().getId()));
+        assertThat(bookingInfo1.getBooker().getId(), is(bookingsCustomer.get(0).getBooker().getId()));
     }
 
     @Test
@@ -269,7 +270,7 @@ public class BookingServiceImplTest {
 
         final ValidationException exception = assertThrows(
                 ValidationException.class,
-                () -> service.findAllBookingsCustomer(booker.getId(), "MINE", 0, 10));
+                () -> service.findAllBookingsCustomer(booker.getId(), "MINE", PageRequest.of(0, 10)));
 
         assertThat("Unknown state: UNSUPPORTED_STATUS", is(exception.getMessage()));
     }
@@ -282,7 +283,7 @@ public class BookingServiceImplTest {
         assertThat(repository.findAll().size(), is(currentSize));
 
         List<BookingInfo> bookingsCustomer = service
-                .findAllBookingsOwner(userDto.getId(), "CURRENT", 0, 10);
+                .findAllBookingsOwner(userDto.getId(), "CURRENT", PageRequest.of(0, 10));
 
         assertThat(bookingsCustomer.size(), is(expectedSizeToOwner));
         assertThat(bookingInfo1.getId(), is(bookingsCustomer.get(0).getId()));
@@ -303,7 +304,7 @@ public class BookingServiceImplTest {
         bookingInfo1 = mapper.toDto(booking);
 
         List<BookingInfo> bookingsCustomer = service
-                .findAllBookingsOwner(userDto.getId(), "PAST", 0, 10);
+                .findAllBookingsOwner(userDto.getId(), "PAST", PageRequest.of(0, 10));
 
         assertThat(repository.findAll().size(), is(allBookingsSize));
         assertThat(bookingsCustomer.size(), is(expectedSizeToOwner));
@@ -326,7 +327,7 @@ public class BookingServiceImplTest {
         bookingInfo1 = mapper.toDto(booking);
 
         List<BookingInfo> bookingsCustomer = service
-                .findAllBookingsOwner(userDto.getId(), "FUTURE", 0, 10);
+                .findAllBookingsOwner(userDto.getId(), "FUTURE", PageRequest.of(0, 10));
 
         assertThat(repository.findAll().size(), is(allBookingsSize));
         assertThat(bookingsCustomer.size(), is(expectedSizeToOwner));
@@ -349,16 +350,16 @@ public class BookingServiceImplTest {
         BookingInfo bookingInfo2 = mapper.toDto(booking);
 
         List<BookingInfo> bookingsCustomer = service
-                .findAllBookingsOwner(userDto.getId(), "WAITING", 0, 10);
+                .findAllBookingsOwner(userDto.getId(), "WAITING", PageRequest.of(0, 10));
 
         assertThat(repository.findAll().size(), is(allBookingsSize));
         assertThat(bookingsCustomer.size(), is(expectedSizeToOwner));
-        assertThat(bookingInfo2.getId(), is(bookingsCustomer.get(0).getId()));
-        assertThat(bookingInfo2.getItem().getId(), is(bookingsCustomer.get(0).getItem().getId()));
-        assertThat(bookingInfo2.getBooker().getId(), is(bookingsCustomer.get(0).getBooker().getId()));
-        assertThat(bookingInfo1.getId(), is(bookingsCustomer.get(1).getId()));
-        assertThat(bookingInfo1.getItem().getId(), is(bookingsCustomer.get(1).getItem().getId()));
-        assertThat(bookingInfo1.getBooker().getId(), is(bookingsCustomer.get(1).getBooker().getId()));
+        assertThat(bookingInfo2.getId(), is(bookingsCustomer.get(1).getId()));
+        assertThat(bookingInfo2.getItem().getId(), is(bookingsCustomer.get(1).getItem().getId()));
+        assertThat(bookingInfo2.getBooker().getId(), is(bookingsCustomer.get(1).getBooker().getId()));
+        assertThat(bookingInfo1.getId(), is(bookingsCustomer.get(0).getId()));
+        assertThat(bookingInfo1.getItem().getId(), is(bookingsCustomer.get(0).getItem().getId()));
+        assertThat(bookingInfo1.getBooker().getId(), is(bookingsCustomer.get(0).getBooker().getId()));
     }
 
     @Test
@@ -375,7 +376,7 @@ public class BookingServiceImplTest {
         BookingInfo bookingFromRepository = service.approvingBooking(userDto.getId(), bookingInfo1.getId(), false);
 
         List<BookingInfo> bookingsCustomer = service
-                .findAllBookingsOwner(userDto.getId(), "REJECTED", 0, 10);
+                .findAllBookingsOwner(userDto.getId(), "REJECTED", PageRequest.of(0, 10));
 
         assertThat(repository.findAll().size(), is(allBookingsSize));
         assertThat(bookingsCustomer.size(), is(expectedSizeToOwner));
@@ -400,16 +401,16 @@ public class BookingServiceImplTest {
         BookingInfo bookingInfo2 = mapper.toDto(booking);
 
         List<BookingInfo> bookingsCustomer = service
-                .findAllBookingsOwner(userDto.getId(), "ALL", 0, 10);
+                .findAllBookingsOwner(userDto.getId(), "ALL", PageRequest.of(0, 10));
 
         assertThat(repository.findAll().size(), is(allBookingsSize));
         assertThat(bookingsCustomer.size(), is(expectedSizeToOwner));
-        assertThat(bookingInfo2.getId(), is(bookingsCustomer.get(0).getId()));
-        assertThat(bookingInfo2.getItem().getId(), is(bookingsCustomer.get(0).getItem().getId()));
-        assertThat(bookingInfo2.getBooker().getId(), is(bookingsCustomer.get(0).getBooker().getId()));
-        assertThat(bookingInfo1.getId(), is(bookingsCustomer.get(1).getId()));
-        assertThat(bookingInfo1.getItem().getId(), is(bookingsCustomer.get(1).getItem().getId()));
-        assertThat(bookingInfo1.getBooker().getId(), is(bookingsCustomer.get(1).getBooker().getId()));
+        assertThat(bookingInfo2.getId(), is(bookingsCustomer.get(1).getId()));
+        assertThat(bookingInfo2.getItem().getId(), is(bookingsCustomer.get(1).getItem().getId()));
+        assertThat(bookingInfo2.getBooker().getId(), is(bookingsCustomer.get(1).getBooker().getId()));
+        assertThat(bookingInfo1.getId(), is(bookingsCustomer.get(0).getId()));
+        assertThat(bookingInfo1.getItem().getId(), is(bookingsCustomer.get(0).getItem().getId()));
+        assertThat(bookingInfo1.getBooker().getId(), is(bookingsCustomer.get(0).getBooker().getId()));
     }
 
     @Test
@@ -418,7 +419,7 @@ public class BookingServiceImplTest {
 
         final ValidationException exception = assertThrows(
                 ValidationException.class,
-                () -> service.findAllBookingsOwner(userDto.getId(), "MINE", 0, 10));
+                () -> service.findAllBookingsOwner(userDto.getId(), "MINE", PageRequest.of(0, 10)));
 
         assertThat("Unknown state: UNSUPPORTED_STATUS", is(exception.getMessage()));
     }

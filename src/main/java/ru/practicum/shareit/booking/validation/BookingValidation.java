@@ -11,6 +11,4 @@ public interface BookingValidation {
     Booking checkBookingData(Integer userId, Integer bookingId);
 
     Booking checkIfStatusAlreadyApproved(Integer userId, Integer bookingId, Boolean approved);
-
-    void checkPaginationInput(Integer from, Integer size);
 }

@@ -214,26 +214,6 @@ public class BookingValidationImplTest {
         assertThat("The status of booking is already approved", is(exception.getMessage()));
     }
 
-    @Test
-    void verifyCheckPaginationInputFromValueException() {
-        assertThat(repository.findAll(), notNullValue());
-
-        final ValidationException exception = assertThrows(
-                ValidationException.class, () -> validation.checkPaginationInput(-1, 1));
-
-        assertThat("The parameter of from must  not be less than zero", is(exception.getMessage()));
-    }
-
-    @Test
-    void verifyCheckPaginationInputSizeValueException() {
-        assertThat(repository.findAll(), notNullValue());
-
-        final ValidationException exception = assertThrows(
-                ValidationException.class, () -> validation.checkPaginationInput(1, 0));
-
-        assertThat("The parameter of size must not be less than one", is(exception.getMessage()));
-    }
-
     private BookingDto makeBookingDto(Booking booking) {
         BookingDto.BookingDtoBuilder builder = BookingDto.builder();
 

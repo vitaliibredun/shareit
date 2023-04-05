@@ -95,16 +95,4 @@ public class BookingValidationImpl implements BookingValidation {
         }
         return booking.get();
     }
-
-    @Override
-    public void checkPaginationInput(Integer from, Integer size) {
-        if (from < 0) {
-            log.error("Validation failed. The parameter of must not be less than zero {}", size);
-            throw new ValidationException("The parameter of from must  not be less than zero");
-        }
-        if (size <= 0) {
-            log.error("Validation failed. The parameter of size must not be less than one {}", size);
-            throw new ValidationException("The parameter of size must not be less than one");
-        }
-    }
 }

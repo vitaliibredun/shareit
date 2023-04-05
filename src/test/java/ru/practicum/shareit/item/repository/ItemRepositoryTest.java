@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import org.springframework.data.domain.PageRequest;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
@@ -224,7 +225,7 @@ public class ItemRepositoryTest {
         assertThat(entityManager.getId(item1), notNullValue());
         assertThat(entityManager.getId(item2), notNullValue());
         assertThat(entityManager.getId(item3), notNullValue());
-        List<Item> itemsFromRepository = repository.searchItemByInput("else");
+        List<Item> itemsFromRepository = repository.searchItemByInput("else", PageRequest.of(0, 10));
         assertThat(itemsFromRepository.size(), equalTo(expectedSize));
         assertThat(item2.getDescription(), sameInstance(itemsFromRepository.get(0).getDescription()));
         assertThat(item2.getName(), sameInstance(itemsFromRepository.get(0).getName()));
@@ -274,7 +275,7 @@ public class ItemRepositoryTest {
         assertThat(entityManager.getId(item1), notNullValue());
         assertThat(entityManager.getId(item2), notNullValue());
         assertThat(entityManager.getId(item3), notNullValue());
-        List<Item> itemsFromRepository = repository.findAllByOwner(userId);
+        List<Item> itemsFromRepository = repository.findAllByOwner(userId, PageRequest.of(0, 10));
         assertThat(itemsFromRepository.size(), equalTo(expectedSize));
         assertThat(item2.getDescription(), sameInstance(itemsFromRepository.get(0).getDescription()));
         assertThat(item3.getDescription(), sameInstance(itemsFromRepository.get(1).getDescription()));

@@ -6,6 +6,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.request.mapper.RequestMapper;
@@ -82,7 +83,7 @@ public class RequestServiceImplIT {
     void findAllItemRequestsTest() {
         Integer expectedSize = 3;
 
-        assertThat(service.findAllItemRequests(user1.getId(), 0, 10), empty());
+        assertThat(service.findAllItemRequests(user1.getId(), PageRequest.of(0,10)), empty());
 
         ItemRequestDto requestDto1 = makeRequestDto("I need a hammer");
         ItemRequestDto requestDto2 = makeRequestDto("I need a screw driver");

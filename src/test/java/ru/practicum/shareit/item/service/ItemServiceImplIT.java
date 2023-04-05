@@ -6,6 +6,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingInfo;
@@ -92,7 +93,7 @@ public class ItemServiceImplIT {
         Integer userId = user1.getId();
         Integer expectedSize = 2;
 
-        assertThat(service.findAllItemsByUser(user1.getId(), 0, 10), empty());
+        assertThat(service.findAllItemsByUser(user1.getId(), PageRequest.of(0,10)), empty());
 
         ItemDto itemDto1 = makeItemDto("Item1", "For something", true);
         ItemDto itemDto2 = makeItemDto("Item2", "For somebody", true);
@@ -121,7 +122,7 @@ public class ItemServiceImplIT {
         Integer expectedSize = 1;
         Integer sizeOfAllItems = 3;
 
-        assertThat(service.searchItemForRent("some", 0, 10), empty());
+        assertThat(service.searchItemForRent("some", PageRequest.of(0,10)), empty());
 
         ItemDto itemDto1 = makeItemDto("Item1", "For something", false);
         ItemDto itemDto2 = makeItemDto("Item2", "For somebody", true);
@@ -133,7 +134,7 @@ public class ItemServiceImplIT {
         TypedQuery<Item> query = entityManager.createQuery("select i from Item i", Item.class);
         List<Item> items = query.getResultList();
         List<ItemDto> itemDtoList = items.stream().map(mapper::toDto).collect(Collectors.toList());
-        List<ItemDto> itemsForRent = service.searchItemForRent("some", 0, 10);
+        List<ItemDto> itemsForRent = service.searchItemForRent("some", PageRequest.of(0,10));
 
         assertThat(itemDtoList.size(), equalTo(sizeOfAllItems));
         assertThat(itemsForRent.size(), equalTo(expectedSize));
