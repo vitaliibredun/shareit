@@ -1,7 +1,7 @@
 package ru.practicum.shareit.booking.model;
 
 import lombok.*;
-import ru.practicum.shareit.booking.model.constants.BookingStatus;
+import ru.practicum.shareit.booking.constants.BookingStatus;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.model.User;
 

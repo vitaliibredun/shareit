@@ -19,7 +19,7 @@ import java.util.Map;
 public class ErrorHandler {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ErrorResponse handleThrowable(final Exception exception) {
+    public ErrorResponse handleException(final Exception exception) {
         log.warn("500 {}", exception.getMessage(), exception);
         return new ErrorResponse(exception.getMessage());
     }
@@ -76,6 +76,13 @@ public class ErrorHandler {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleBookerIsOwnerOfItemException(final BookerIsOwnerOfItemException exception) {
+        log.warn("404 {}", exception.getMessage(), exception);
+        return new ErrorResponse(exception.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse handleRequestNotFoundException(final RequestNotFoundException exception) {
         log.warn("404 {}", exception.getMessage(), exception);
         return new ErrorResponse(exception.getMessage());
     }
