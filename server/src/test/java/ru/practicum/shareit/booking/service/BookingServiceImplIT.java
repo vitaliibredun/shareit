@@ -1,7 +1,6 @@
 package ru.practicum.shareit.booking.service;
 
 import lombok.RequiredArgsConstructor;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,11 +58,6 @@ public class BookingServiceImplIT {
         item1 = itemService.createItem(user1.getId(), itemToSave1);
         item2 = itemService.createItem(user2.getId(), itemToSave2);
         item3 = itemService.createItem(user3.getId(), itemToSave3);
-    }
-
-    @AfterEach
-    void cleanUp() {
-        resetIdColumns();
     }
 
     @Test
@@ -177,12 +171,5 @@ public class BookingServiceImplIT {
         builder.end(end);
 
         return builder.build();
-    }
-
-    private void resetIdColumns() {
-        entityManager.createNativeQuery("ALTER TABLE bookings ALTER COLUMN id RESTART WITH 1").executeUpdate();
-        entityManager.createNativeQuery("ALTER TABLE items ALTER COLUMN id RESTART WITH 1").executeUpdate();
-        entityManager.createNativeQuery("ALTER TABLE comments ALTER COLUMN id RESTART WITH 1").executeUpdate();
-        entityManager.createNativeQuery("ALTER TABLE users ALTER COLUMN id RESTART WITH 1").executeUpdate();
     }
 }

@@ -1,7 +1,6 @@
 package ru.practicum.shareit.booking.service;
 
 import lombok.RequiredArgsConstructor;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +23,6 @@ import ru.practicum.user.mapper.UserMapper;
 import ru.practicum.user.model.User;
 import ru.practicum.user.repository.UserRepository;
 
-import javax.persistence.EntityManager;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -42,7 +40,6 @@ public class BookingServiceImplTest {
     private final ItemRepository itemRepository;
     private final UserRepository userRepository;
     private final BookingRepository repository;
-    private final EntityManager entityManager;
     private final BookingMapper mapper;
     private final UserMapper userMapper;
     private BookingInfo bookingInfo1;
@@ -65,11 +62,6 @@ public class BookingServiceImplTest {
         Booking bookingToSave = makeBooking(item, booker, LocalDateTime.now(), LocalDateTime.now().plusHours(2));
         Booking booking = repository.save(bookingToSave);
         bookingInfo1 = mapper.toDto(booking);
-    }
-
-    @AfterEach
-    void cleanUp() {
-        resetIdColumns();
     }
 
     @Test
@@ -467,11 +459,5 @@ public class BookingServiceImplTest {
         builder.email(email);
 
         return builder.build();
-    }
-
-    private void resetIdColumns() {
-        entityManager.createNativeQuery("ALTER TABLE items ALTER COLUMN id RESTART WITH 1").executeUpdate();
-        entityManager.createNativeQuery("ALTER TABLE users ALTER COLUMN id RESTART WITH 1").executeUpdate();
-        entityManager.createNativeQuery("ALTER TABLE bookings ALTER COLUMN id RESTART WITH 1").executeUpdate();
     }
 }

@@ -29,7 +29,6 @@ public class BookingServiceImpl implements BookingService {
     private final BookingMapper mapper;
 
     @Override
-    @CachePut(cacheNames = {"recordsCache"}, key = "#userId")
     public BookingInfo createBooking(Integer userId, BookingDto bookingDto) {
         User user = userValidation.checkUserExist(userId);
         Item item = bookingValidation.checkItemData(user, bookingDto);
@@ -42,7 +41,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    @CachePut(cacheNames = {"recordsCache"}, key = "{#userId, #bookingId}")
+    @CachePut(cacheNames = {"approvingBooking"}, key = "{#userId, #bookingId}")
     public BookingInfo approvingBooking(Integer userId, Integer bookingId, Boolean approved) {
         Booking booking = bookingValidation.checkIfStatusAlreadyApproved(userId, bookingId, approved);
         if (approved) {
@@ -57,14 +56,14 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    @Cacheable(cacheNames = {"recordsCache"}, key = "{#userId, #bookingId}")
+    @Cacheable(cacheNames = {"findBooking"}, key = "{#userId, #bookingId}")
     public BookingInfo findBooking(Integer userId, Integer bookingId) {
         Booking booking = bookingValidation.checkBookingData(userId, bookingId);
         return mapper.toDto(booking);
     }
 
     @Override
-    @Cacheable(cacheNames = {"recordsCache"}, key = "{#userId, #state, #pageable.pageNumber, #pageable.pageSize}")
+    @Cacheable(cacheNames = {"findAllBookingsCustomer"}, key = "{#userId, #state, #pageable.pageNumber, #pageable.pageSize}")
     public List<BookingInfo> findAllBookingsCustomer(Integer userId, String state, Pageable pageable) {
         userValidation.checkUserExist(userId);
         switch (state) {
@@ -103,7 +102,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    @Cacheable(cacheNames = {"recordsCache"}, key = "{#userId, #state, #pageable.pageNumber, #pageable.pageSize}")
+    @Cacheable(cacheNames = {"findAllBookingsOwner"}, key = "{#userId, #state, #pageable.pageNumber, #pageable.pageSize}")
     public List<BookingInfo> findAllBookingsOwner(Integer userId, String state, Pageable pageable) {
         userValidation.checkUserExist(userId);
         switch (state) {

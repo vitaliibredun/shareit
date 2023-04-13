@@ -1,7 +1,6 @@
 package ru.practicum.shareit.user.service;
 
 import lombok.RequiredArgsConstructor;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +13,6 @@ import ru.practicum.user.model.User;
 import ru.practicum.user.repository.UserRepository;
 import ru.practicum.user.service.UserService;
 
-import javax.persistence.EntityManager;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -27,7 +25,6 @@ import static org.hamcrest.Matchers.*;
 public class UserServiceImplTest {
     private final UserService service;
     private final UserRepository repository;
-    private final EntityManager entityManager;
     private final UserMapper mapper;
     private UserDto userDto;
 
@@ -36,11 +33,6 @@ public class UserServiceImplTest {
         User userToSave = makeUser("John", "email@mail.com");
         User user = repository.save(userToSave);
         userDto = mapper.toDto(user);
-    }
-
-    @AfterEach
-    void cleanUp() {
-        resetIdColumns();
     }
 
     @Test
@@ -137,9 +129,5 @@ public class UserServiceImplTest {
         builder.email(email);
 
         return builder.build();
-    }
-
-    private void resetIdColumns() {
-        entityManager.createNativeQuery("ALTER TABLE users ALTER COLUMN id RESTART WITH 1").executeUpdate();
     }
 }

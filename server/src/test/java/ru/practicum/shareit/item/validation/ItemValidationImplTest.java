@@ -1,7 +1,6 @@
 package ru.practicum.shareit.item.validation;
 
 import lombok.RequiredArgsConstructor;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,8 +15,6 @@ import ru.practicum.item.validation.ItemValidation;
 import ru.practicum.user.model.User;
 import ru.practicum.user.repository.UserRepository;
 
-import javax.persistence.EntityManager;
-
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
@@ -31,7 +28,6 @@ public class ItemValidationImplTest {
     private final ItemValidation validation;
     private final ItemRepository repository;
     private final UserRepository userRepository;
-    private final EntityManager entityManager;
     private Item item;
 
     @BeforeEach
@@ -41,11 +37,6 @@ public class ItemValidationImplTest {
 
         Item itemToSave = makeItem("Item1", "For something", true, user);
         item = repository.save(itemToSave);
-    }
-
-    @AfterEach
-    void cleanUp() {
-        resetIdColumns();
     }
 
     @Test
@@ -92,10 +83,5 @@ public class ItemValidationImplTest {
         builder.email(email);
 
         return builder.build();
-    }
-
-    private void resetIdColumns() {
-        entityManager.createNativeQuery("ALTER TABLE items ALTER COLUMN id RESTART WITH 1").executeUpdate();
-        entityManager.createNativeQuery("ALTER TABLE users ALTER COLUMN id RESTART WITH 1").executeUpdate();
     }
 }

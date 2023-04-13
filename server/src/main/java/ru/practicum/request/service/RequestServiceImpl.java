@@ -1,7 +1,6 @@
 package ru.practicum.request.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -29,7 +28,6 @@ public class RequestServiceImpl implements RequestService {
     private final UserValidation userValidation;
 
     @Override
-    @CachePut(cacheNames = {"recordsCache"}, key = "#userId")
     public ItemRequestDto createItemRequest(Integer userId, ItemRequestDto itemRequestDto) {
         User user = userValidation.checkUserExist(userId);
         ItemRequest itemRequest = mapper.toModel(itemRequestDto);
@@ -39,7 +37,7 @@ public class RequestServiceImpl implements RequestService {
     }
 
     @Override
-    @Cacheable(cacheNames = {"recordsCache"}, key = "#userId")
+    @Cacheable(cacheNames = {"findAllItemRequestsByUser"}, key = "#userId")
     public List<ItemRequestInfo> findAllItemRequestsByUser(Integer userId) {
         userValidation.checkUserExist(userId);
         List<ItemRequestInfo> requestList = new ArrayList<>();
@@ -53,7 +51,7 @@ public class RequestServiceImpl implements RequestService {
     }
 
     @Override
-    @Cacheable(cacheNames = {"recordsCache"}, key = "{#userId, #pageable.pageNumber, #pageable.pageSize}")
+    @Cacheable(cacheNames = {"findAllItemRequests"}, key = "{#userId, #pageable.pageNumber, #pageable.pageSize}")
     public List<ItemRequestInfo> findAllItemRequests(Integer userId, Pageable pageable) {
         List<ItemRequestInfo> requestList = new ArrayList<>();
         List<ItemRequest> itemRequests = requestRepository.findAllExceptRequestor(userId, pageable);
@@ -66,7 +64,7 @@ public class RequestServiceImpl implements RequestService {
     }
 
     @Override
-    @Cacheable(cacheNames = {"recordsCache"}, key = "{#userId, #requestId}")
+    @Cacheable(cacheNames = {"findItemRequest"}, key = "{#userId, #requestId}")
     public ItemRequestInfo findItemRequest(Integer userId, Integer requestId) {
         userValidation.checkUserExist(userId);
         Optional<ItemRequest> itemRequest = requestRepository.findById(requestId);

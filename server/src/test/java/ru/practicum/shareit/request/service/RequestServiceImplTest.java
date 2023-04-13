@@ -1,7 +1,6 @@
 package ru.practicum.shareit.request.service;
 
 import lombok.RequiredArgsConstructor;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +22,6 @@ import ru.practicum.user.mapper.UserMapper;
 import ru.practicum.user.model.User;
 import ru.practicum.user.repository.UserRepository;
 
-import javax.persistence.EntityManager;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -40,7 +38,6 @@ public class RequestServiceImplTest {
     private final RequestRepository repository;
     private final ItemRepository itemRepository;
     private final UserRepository userRepository;
-    private final EntityManager entityManager;
     private final RequestMapper mapper;
     private final UserMapper userMapper;
     private UserDto userDto;
@@ -56,11 +53,6 @@ public class RequestServiceImplTest {
         ItemRequestDto requestToSave = makeRequestDto("I'm looking for a hammer");
         requestDto = service.createItemRequest(userDto.getId(), requestToSave);
         request = mapper.toModel(requestDto);
-    }
-
-    @AfterEach
-    void cleanUp() {
-        resetIdColumns();
     }
 
     @Test
@@ -216,11 +208,5 @@ public class RequestServiceImplTest {
         builder.email(email);
 
         return builder.build();
-    }
-
-    private void resetIdColumns() {
-        entityManager.createNativeQuery("ALTER TABLE items ALTER COLUMN id RESTART WITH 1").executeUpdate();
-        entityManager.createNativeQuery("ALTER TABLE users ALTER COLUMN id RESTART WITH 1").executeUpdate();
-        entityManager.createNativeQuery("ALTER TABLE requests ALTER COLUMN id RESTART WITH 1").executeUpdate();
     }
 }

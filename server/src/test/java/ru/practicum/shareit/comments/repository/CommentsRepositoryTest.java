@@ -1,7 +1,6 @@
 package ru.practicum.shareit.comments.repository;
 
 import lombok.RequiredArgsConstructor;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,11 +67,6 @@ public class CommentsRepositoryTest {
         userRepository.save(user2);
         itemRepository.save(item1);
         itemRepository.save(item2);
-    }
-
-    @AfterEach
-    void cleanUp() {
-        resetIdColumns();
     }
 
     @Test
@@ -198,11 +192,5 @@ public class CommentsRepositoryTest {
         assertThat(comment2.getText(), equalTo(itemsFromRepository.get(1).getText()));
         assertThat(comment1.getAuthor().getName(), equalTo(itemsFromRepository.get(0).getAuthorName()));
         assertThat(comment2.getAuthor().getName(), equalTo(itemsFromRepository.get(1).getAuthorName()));
-    }
-
-    private void resetIdColumns() {
-        entityManager.getEntityManager().createNativeQuery("ALTER TABLE comments ALTER COLUMN id RESTART WITH 1").executeUpdate();
-        entityManager.getEntityManager().createNativeQuery("ALTER TABLE items ALTER COLUMN id RESTART WITH 1").executeUpdate();
-        entityManager.getEntityManager().createNativeQuery("ALTER TABLE users ALTER COLUMN id RESTART WITH 1").executeUpdate();
     }
 }

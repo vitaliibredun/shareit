@@ -1,7 +1,6 @@
 package ru.practicum.shareit.booking.validation;
 
 import lombok.RequiredArgsConstructor;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +18,6 @@ import ru.practicum.item.repository.ItemRepository;
 import ru.practicum.user.model.User;
 import ru.practicum.user.repository.UserRepository;
 
-import javax.persistence.EntityManager;
 import java.time.LocalDateTime;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -36,7 +34,6 @@ public class BookingValidationImplTest {
     private final BookingRepository repository;
     private final ItemRepository itemRepository;
     private final UserRepository userRepository;
-    private final EntityManager entityManager;
     private User user;
     private Item item;
     private Booking booking;
@@ -52,11 +49,6 @@ public class BookingValidationImplTest {
         Booking bookingToSave = makeBooking(item,
                 LocalDateTime.now().plusHours(1), LocalDateTime.now().plusHours(2), user);
         booking = repository.save(bookingToSave);
-    }
-
-    @AfterEach
-    void cleanUp() {
-        resetIdColumns();
     }
 
     @Test
@@ -257,11 +249,5 @@ public class BookingValidationImplTest {
         builder.email(email);
 
         return builder.build();
-    }
-
-    private void resetIdColumns() {
-        entityManager.createNativeQuery("ALTER TABLE bookings ALTER COLUMN id RESTART WITH 1").executeUpdate();
-        entityManager.createNativeQuery("ALTER TABLE items ALTER COLUMN id RESTART WITH 1").executeUpdate();
-        entityManager.createNativeQuery("ALTER TABLE users ALTER COLUMN id RESTART WITH 1").executeUpdate();
     }
 }

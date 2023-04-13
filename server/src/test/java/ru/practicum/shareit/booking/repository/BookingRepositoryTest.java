@@ -1,7 +1,6 @@
 package ru.practicum.shareit.booking.repository;
 
 import lombok.RequiredArgsConstructor;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -92,11 +91,6 @@ public class BookingRepositoryTest {
         requestRepository.save(itemRequest);
         itemRepository.save(item1);
         itemRepository.save(item2);
-    }
-
-    @AfterEach
-    void cleanUp() {
-        resetIdColumns();
     }
 
     @Test
@@ -235,16 +229,5 @@ public class BookingRepositoryTest {
         assertThat(user1.getId(), sameInstance(booking2.getBooker().getId()));
         assertThat(booking2.getBooker().getId(), sameInstance(bookingsFromRepository.get(0).getBookerId()));
         assertThat(booking2.getItem().getId(), sameInstance(bookingsFromRepository.get(0).getItemId()));
-    }
-
-    private void resetIdColumns() {
-        entityManager.getEntityManager()
-                .createNativeQuery("ALTER TABLE bookings ALTER COLUMN id RESTART WITH 1").executeUpdate();
-        entityManager.getEntityManager()
-                .createNativeQuery("ALTER TABLE items ALTER COLUMN id RESTART WITH 1").executeUpdate();
-        entityManager.getEntityManager()
-                .createNativeQuery("ALTER TABLE requests ALTER COLUMN id RESTART WITH 1").executeUpdate();
-        entityManager.getEntityManager()
-                .createNativeQuery("ALTER TABLE users ALTER COLUMN id RESTART WITH 1").executeUpdate();
     }
 }

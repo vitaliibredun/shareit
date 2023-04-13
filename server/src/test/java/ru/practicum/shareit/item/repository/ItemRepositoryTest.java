@@ -1,7 +1,6 @@
 package ru.practicum.shareit.item.repository;
 
 import lombok.RequiredArgsConstructor;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -85,11 +84,6 @@ public class ItemRepositoryTest {
         requestRepository.save(request1);
         requestRepository.save(request2);
         requestRepository.save(request3);
-    }
-
-    @AfterEach
-    void cleanUp() {
-        resetIdColumns();
     }
 
     @Test
@@ -332,11 +326,5 @@ public class ItemRepositoryTest {
         assertThat(item3.getRequest(), sameInstance(request3));
         assertThat(request3.getId(), sameInstance(itemsFromRepository.get(0).getRequestId()));
         assertThat(item3.getName(), sameInstance(itemsFromRepository.get(0).getName()));
-    }
-
-    private void resetIdColumns() {
-        entityManager.getEntityManager().createNativeQuery("ALTER TABLE items ALTER COLUMN id RESTART WITH 1").executeUpdate();
-        entityManager.getEntityManager().createNativeQuery("ALTER TABLE requests ALTER COLUMN id RESTART WITH 1").executeUpdate();
-        entityManager.getEntityManager().createNativeQuery("ALTER TABLE users ALTER COLUMN id RESTART WITH 1").executeUpdate();
     }
 }

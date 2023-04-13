@@ -46,7 +46,6 @@ public class ItemServiceImpl implements ItemService {
     private final ItemMapper itemMapper;
 
     @Override
-    @CachePut(cacheNames = {"recordsCache"}, key = "#userId")
     public ItemDto createItem(Integer userId, ItemDto itemDto) {
         User user = userValidation.checkUserExist(userId);
         if (itemDto.getRequestId() != null) {
@@ -63,7 +62,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    @CachePut(cacheNames = {"recordsCache"}, key = "{#userId, #itemId}")
+    @CachePut(cacheNames = {"updateItem"}, key = "{#userId, #itemId}")
     public ItemDto updateItem(Integer userId, Integer itemId, ItemDto itemDto) {
         Item item = itemValidation.checkOwnerOfItem(userId, itemId);
         if (itemDto.getName() != null) {
@@ -80,7 +79,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    @Cacheable(cacheNames = {"recordsCache"}, key = "{#userId, #itemId}")
+    @Cacheable(cacheNames = {"findItem"}, key = "{#userId, #itemId}")
     public ItemInfo findItem(Integer userId, Integer itemId) {
         Item item = itemValidation.checkIfItemExist(itemId);
         List<CommentInfo> comments = commentsRepository.findAllByItemId(itemId);
@@ -94,7 +93,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    @Cacheable(cacheNames = {"recordsCache"}, key = "{#userId, #pageable.pageNumber, #pageable.pageSize}")
+    @Cacheable(cacheNames = {"findAllItemsByUser"}, key = "{#userId, #pageable.pageNumber, #pageable.pageSize}")
     public List<ItemInfo> findAllItemsByUser(Integer userId, Pageable pageable) {
         List<ItemInfo> itemInfoList = new ArrayList<>();
         List<Item> items = itemRepository.findAllByOwner(userId, pageable);
@@ -108,7 +107,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    @Cacheable(cacheNames = {"recordsCache"}, key = "{#text, #pageable.pageNumber, #pageable.pageSize}")
+    @Cacheable(cacheNames = {"searchItemForRent"}, key = "{#text, #pageable.pageNumber, #pageable.pageSize}")
     public List<ItemDto> searchItemForRent(String text, Pageable pageable) {
         if (text.isEmpty()) {
             return new ArrayList<>();
@@ -120,7 +119,6 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    @CachePut(cacheNames = {"recordsCache"}, key = "{#userId, #itemId}")
     public CommentDto addComment(Integer userId, Integer itemId, CommentDto commentDto) {
         commentValidation.checkUser(userId, itemId, commentDto);
         User user = userRepository.findById(userId).orElseThrow();

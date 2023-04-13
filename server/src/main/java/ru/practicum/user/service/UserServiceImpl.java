@@ -5,10 +5,10 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
-import ru.practicum.user.mapper.UserMapper;
-import ru.practicum.user.repository.UserRepository;
 import ru.practicum.user.dto.UserDto;
+import ru.practicum.user.mapper.UserMapper;
 import ru.practicum.user.model.User;
+import ru.practicum.user.repository.UserRepository;
 import ru.practicum.user.validation.UserValidation;
 
 import java.util.List;
@@ -29,7 +29,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Cacheable(cacheNames = {"recordsCache"}, key = "#userId")
+    @Cacheable(cacheNames = {"findUser"}, key = "#userId")
     public UserDto findUser(Integer userId) {
         User user = validation.checkUserExist(userId);
         return mapper.toDto(user);
@@ -44,7 +44,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @CachePut(cacheNames = {"recordsCache"}, key = "#userId")
+    @CachePut(cacheNames = {"updateUser"}, key = "#userId")
     public UserDto updateUser(Integer userId, UserDto userDto) {
         User user = validation.checkUserExist(userId);
         if (userDto.getName() != null) {
@@ -58,7 +58,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @CacheEvict(cacheNames = {"recordsCache"}, key = "#userId")
+    @CacheEvict(cacheNames = {"deleteUser"}, key = "#userId")
     public void deleteUser(Integer userId) {
         repository.deleteById(userId);
     }

@@ -1,7 +1,6 @@
 package ru.practicum.shareit.request.service;
 
 import lombok.RequiredArgsConstructor;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,11 +59,6 @@ public class RequestServiceImplIT {
         user3 = userService.createUser(userToSave3);
     }
 
-    @AfterEach
-    void cleanUp() {
-        resetIdColumns();
-    }
-
     @Test
     void createItemRequestTest() {
         ItemRequestDto requestDto = makeRequestDto("I need a hammer");
@@ -113,11 +107,5 @@ public class RequestServiceImplIT {
         builder.description(description);
 
         return builder.build();
-    }
-
-    private void resetIdColumns() {
-        entityManager.createNativeQuery("ALTER TABLE requests ALTER COLUMN id RESTART WITH 1").executeUpdate();
-        entityManager.createNativeQuery("ALTER TABLE items ALTER COLUMN id RESTART WITH 1").executeUpdate();
-        entityManager.createNativeQuery("ALTER TABLE users ALTER COLUMN id RESTART WITH 1").executeUpdate();
     }
 }
