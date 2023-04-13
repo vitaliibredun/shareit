@@ -17,8 +17,7 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
     @Query("select new ru.practicum.booking.dto.BookingFromRepository" +
             "(b.id, b.item.id, b.item.name, b.start, b.end, b.booker.id, b.booker.name, b.status) " +
             "from Booking b " +
-            "where b.booker.id = ?1  " +
-            "group by b.id")
+            "where b.booker.id = ?1")
     List<BookingFromRepository> findAllByBooker(Integer userId, Pageable pageable);
 
     @Query("select new ru.practicum.booking.dto.BookingFromRepository" +
@@ -26,47 +25,41 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
             "from Booking b " +
             "where b.booker.id = ?1 " +
             "and b.end > current_timestamp " +
-            "and b.start < current_timestamp " +
-            "group by b.id")
+            "and b.start < current_timestamp")
     List<BookingFromRepository> findAllCurrentByBooker(Integer userId, Pageable pageable);
 
     @Query("select new ru.practicum.booking.dto.BookingFromRepository" +
             "(b.id, b.item.id, b.item.name, b.start, b.end, b.booker.id, b.booker.name, b.status) " +
             "from Booking b " +
             "where b.booker.id = ?1 " +
-            "and b.end < current_timestamp " +
-            "group by b.id")
+            "and b.end < current_timestamp")
     List<BookingFromRepository> findAllPastByBooker(Integer userId, Pageable pageable);
 
     @Query("select new ru.practicum.booking.dto.BookingFromRepository" +
             "(b.id, b.item.id, b.item.name, b.start, b.end, b.booker.id, b.booker.name, b.status) " +
             "from Booking b " +
             "where b.booker.id = ?1 " +
-            "and b.start > current_timestamp " +
-            "group by b.id")
+            "and b.start > current_timestamp")
     List<BookingFromRepository> findAllFutureByBooker(Integer userId, Pageable pageable);
 
     @Query("select new ru.practicum.booking.dto.BookingFromRepository" +
             "(b.id, b.item.id, b.item.name, b.start, b.end, b.booker.id, b.booker.name, b.status) " +
             "from Booking b " +
             "where b.booker.id = ?1 " +
-            "and b.status = ru.practicum.booking.constants.BookingStatus.WAITING " +
-            "group by b.id")
+            "and b.status = ru.practicum.booking.constants.BookingStatus.WAITING")
     List<BookingFromRepository> findAllWaitingStatusByBooker(Integer userId, Pageable pageable);
 
     @Query("select new ru.practicum.booking.dto.BookingFromRepository" +
             "(b.id, b.item.id, b.item.name, b.start, b.end, b.booker.id, b.booker.name, b.status) " +
             "from Booking b " +
             "where b.booker.id = ?1 " +
-            "and b.status = ru.practicum.booking.constants.BookingStatus.REJECTED " +
-            "group by b.id")
+            "and b.status = ru.practicum.booking.constants.BookingStatus.REJECTED")
     List<BookingFromRepository> findAllRejectedStatusByBooker(Integer userId, Pageable pageable);
 
     @Query("select new ru.practicum.booking.dto.BookingFromRepository" +
             "(b.id, b.item.id, b.item.name, b.start, b.end, b.booker.id, b.booker.name, b.status) " +
             "from Booking b " +
-            "where b.item.owner.id = ?1 " +
-            "group by b.id")
+            "where b.item.owner.id = ?1")
     List<BookingFromRepository> findAllByOwner(Integer userId, Pageable pageable);
 
     @Query("select new ru.practicum.booking.dto.BookingFromRepository" +
@@ -74,40 +67,35 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
             "from Booking b " +
             "where b.item.owner.id = ?1 " +
             "and b.end > current_timestamp " +
-            "and b.start < current_timestamp " +
-            "group by b.id")
+            "and b.start < current_timestamp")
     List<BookingFromRepository> findAllCurrentByOwner(Integer userId, Pageable pageable);
 
     @Query("select new ru.practicum.booking.dto.BookingFromRepository" +
             "(b.id, b.item.id, b.item.name, b.start, b.end, b.booker.id, b.booker.name, b.status) " +
             "from Booking b " +
             "where b.item.owner.id = ?1 " +
-            "and b.end < current_timestamp " +
-            "group by b.id")
+            "and b.end < current_timestamp")
     List<BookingFromRepository> findAllPastByOwner(Integer userId, Pageable pageable);
 
     @Query("select new ru.practicum.booking.dto.BookingFromRepository" +
             "(b.id, b.item.id, b.item.name, b.start, b.end, b.booker.id, b.booker.name, b.status) " +
             "from Booking b " +
             "where b.item.owner.id = ?1 " +
-            "and b.start > current_timestamp " +
-            "group by b.id")
+            "and b.start > current_timestamp")
     List<BookingFromRepository> findAllFutureByOwner(Integer userId, Pageable pageable);
 
     @Query("select new ru.practicum.booking.dto.BookingFromRepository" +
             "(b.id, b.item.id, b.item.name, b.start, b.end, b.booker.id, b.booker.name, b.status) " +
             "from Booking b " +
             "where b.item.owner.id = ?1 " +
-            "and b.status = ru.practicum.booking.constants.BookingStatus.WAITING " +
-            "group by b.id")
+            "and b.status = ru.practicum.booking.constants.BookingStatus.WAITING")
     List<BookingFromRepository> findAllWaitingStatusByOwner(Integer userId, Pageable pageable);
 
     @Query("select new ru.practicum.booking.dto.BookingFromRepository" +
             "(b.id, b.item.id, b.item.name, b.start, b.end, b.booker.id, b.booker.name, b.status) " +
             "from Booking b " +
             "where b.item.owner.id = ?1 " +
-            "and b.status = ru.practicum.booking.constants.BookingStatus.REJECTED " +
-            "group by b.id")
+            "and b.status = ru.practicum.booking.constants.BookingStatus.REJECTED")
     List<BookingFromRepository> findAllRejectedStatusByOwner(Integer userId, Pageable pageable);
 
     @Query("select new ru.practicum.booking.dto.LastBooking" +

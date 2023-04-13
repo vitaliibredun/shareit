@@ -25,6 +25,6 @@ public class ItemRequest {
     @JoinColumn(name = "requestor", referencedColumnName = "id")
     private User requestor;
     @Column(name = "created")
-    @Builder.Default
+//    @Builder.Default    TODO
     private LocalDateTime created = LocalDateTime.now();
 }

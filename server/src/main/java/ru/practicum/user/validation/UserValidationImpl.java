@@ -19,8 +19,8 @@ public class UserValidationImpl implements UserValidation {
     public User checkUserExist(Integer userId) {
         Optional<User> user = repository.findById(userId);
         if (user.isEmpty()) {
-            log.error("Validation failed. The ru.practicum.user with id {} doesn't exist", userId);
-            throw new UserNotFoundException("The ru.practicum.user doesn't exist");
+            log.error("Validation failed. The user with id {} doesn't exist", userId);
+            throw new UserNotFoundException("The user doesn't exist");
         }
         return user.get();
     }

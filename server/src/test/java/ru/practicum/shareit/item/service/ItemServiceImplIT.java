@@ -22,7 +22,6 @@ import ru.practicum.user.service.UserService;
 
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
-
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;

@@ -50,7 +50,7 @@ public class UserValidationImplTest {
         final UserNotFoundException exception = assertThrows(
                 UserNotFoundException.class, () -> validation.checkUserExist(someUser.getId()));
 
-        assertThat("The ru.practicum.user doesn't exist", is(exception.getMessage()));
+        assertThat("The user doesn't exist", is(exception.getMessage()));
     }
 
     private User makeUser(String name, String email) {

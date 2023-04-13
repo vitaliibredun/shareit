@@ -29,6 +29,6 @@ public class Comment {
     @JoinColumn(name = "author_id", referencedColumnName = "id")
     private User author;
     @Column(name = "created")
-    @Builder.Default
+//    @Builder.Default    TODO
     private LocalDateTime created = LocalDateTime.now();
 }
