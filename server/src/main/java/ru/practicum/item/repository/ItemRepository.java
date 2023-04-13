@@ -21,7 +21,8 @@ public interface ItemRepository extends JpaRepository<Item, Integer> {
 
     @Query("select i " +
             "from Item i " +
-            "where i.owner.id = ?1")
+            "where i.owner.id = ?1 " +
+            "order by i.id")
     List<Item> findAllByOwner(Integer userId, Pageable pageable);
 
     @Query("select new ru.practicum.item.dto.ItemDto" +
