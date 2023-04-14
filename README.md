@@ -3,8 +3,8 @@
 This is a Spring Boot application allows users to add items and share them with their contacts. 
   
 ## Features:	
-- Create a user
-- Add an item
+- Create a ru.practicum.user
+- Add an ru.practicum.item
 - Search by name or description
 
 ## Technologies
