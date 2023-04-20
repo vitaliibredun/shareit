@@ -1,6 +1,6 @@
 # ShareIt 
 
-This is a Spring Boot application allows users to add items and share them with their contacts. 
+This is a Spring Boot application built with a multi-module architecture. It allows users to add items and share them with their contacts. 
   
 ## Features:	
 - Create a ru.practicum.user
@@ -10,6 +10,7 @@ This is a Spring Boot application allows users to add items and share them with 
 ## Technologies
 * Spring Boot
 * Hibernate
+* Docker
 * Maven
 * Lombok
  
