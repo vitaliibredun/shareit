@@ -1,38 +1,18 @@
 package ru.practicum.comments.mapper;
 
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.MappingConstants;
 import ru.practicum.comments.dto.CommentDto;
 import ru.practicum.comments.model.Comment;
 import ru.practicum.user.model.User;
 
-@Mapper
+@Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface CommentMapper {
-    default CommentDto toDto(Comment comment, User user) {
-        if (comment == null || user == null) {
-            return null;
-        }
 
-        CommentDto.CommentDtoBuilder commentDtoBuilder = CommentDto.builder();
+    @Mapping(target = "id", source = "comment.id")
+    @Mapping(target = "authorName", source = "user.name")
+    CommentDto toDto(Comment comment, User user);
 
-        commentDtoBuilder.id(comment.getId());
-        commentDtoBuilder.text(comment.getText());
-        commentDtoBuilder.authorName(user.getName());
-        commentDtoBuilder.created(comment.getCreated());
-
-        return commentDtoBuilder.build();
-    }
-
-    default Comment toModel(CommentDto commentDto) {
-        if (commentDto == null) {
-            return null;
-        }
-
-        Comment.CommentBuilder commentBuilder = Comment.builder();
-
-        commentBuilder.id(commentDto.getId());
-        commentBuilder.text(commentDto.getText());
-        commentBuilder.created(commentDto.getCreated());
-
-        return commentBuilder.build();
-    }
+    Comment toModel(CommentDto commentDto);
 }
